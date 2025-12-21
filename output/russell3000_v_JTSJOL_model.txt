@@ -1,0 +1,27 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:           Job Openings   R-squared:                       0.857
+Model:                            OLS   Adj. R-squared:                  0.857
+Method:                 Least Squares   F-statistic:                     1370.
+Date:                Fri, 19 Dec 2025   Prob (F-statistic):           2.31e-98
+Time:                        13:42:28   Log-Likelihood:                -1757.1
+No. Observations:                 230   AIC:                             3518.
+Df Residuals:                     228   BIC:                             3525.
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+================================================================================
+                   coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------
+const         1412.4754     90.057     15.684      0.000    1235.026    1589.925
+Russell 3000     3.3080      0.089     37.008      0.000       3.132       3.484
+==============================================================================
+Omnibus:                        0.922   Durbin-Watson:                   0.215
+Prob(Omnibus):                  0.631   Jarque-Bera (JB):                0.953
+Skew:                          -0.024   Prob(JB):                        0.621
+Kurtosis:                       2.688   Cond. No.                     2.72e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 2.72e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.

@@ -1,0 +1,27 @@
+                             OLS Regression Results                             
+================================================================================
+Dep. Variable:     Job Openings: Retail   R-squared:                       0.816
+Model:                              OLS   Adj. R-squared:                  0.815
+Method:                   Least Squares   F-statistic:                     1009.
+Date:                  Fri, 19 Dec 2025   Prob (F-statistic):           1.13e-85
+Time:                          13:42:29   Log-Likelihood:                -1324.0
+No. Observations:                   230   AIC:                             2652.
+Df Residuals:                       228   BIC:                             2659.
+Df Model:                             1                                         
+Covariance Type:              nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         98.6189     14.075      7.007      0.000      70.885     126.353
+S&P 500        0.2608      0.008     31.760      0.000       0.245       0.277
+==============================================================================
+Omnibus:                        5.101   Durbin-Watson:                   0.787
+Prob(Omnibus):                  0.078   Jarque-Bera (JB):                4.936
+Skew:                           0.274   Prob(JB):                       0.0847
+Kurtosis:                       3.464   Cond. No.                     4.76e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 4.76e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.

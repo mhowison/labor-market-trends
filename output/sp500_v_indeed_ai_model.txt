@@ -1,0 +1,27 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:             Indeed: AI   R-squared:                       0.451
+Model:                            OLS   Adj. R-squared:                  0.406
+Method:                 Least Squares   F-statistic:                     9.877
+Date:                Fri, 19 Dec 2025   Prob (F-statistic):            0.00849
+Time:                        13:42:28   Log-Likelihood:                -46.129
+No. Observations:                  14   AIC:                             96.26
+Df Residuals:                      12   BIC:                             97.54
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         64.2583     35.820      1.794      0.098     -13.787     142.304
+S&P 500        0.0380      0.012      3.143      0.008       0.012       0.064
+==============================================================================
+Omnibus:                        8.898   Durbin-Watson:                   0.848
+Prob(Omnibus):                  0.012   Jarque-Bera (JB):                4.996
+Skew:                           1.129   Prob(JB):                       0.0823
+Kurtosis:                       4.863   Cond. No.                     5.63e+04
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 5.63e+04. This might indicate that there are
+strong multicollinearity or other numerical problems.

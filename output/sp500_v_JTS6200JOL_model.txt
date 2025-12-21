@@ -1,0 +1,27 @@
+                               OLS Regression Results                               
+====================================================================================
+Dep. Variable:     Job Openings: Healthcare   R-squared:                       0.837
+Model:                                  OLS   Adj. R-squared:                  0.836
+Method:                       Least Squares   F-statistic:                     1172.
+Date:                      Fri, 19 Dec 2025   Prob (F-statistic):           8.32e-92
+Time:                              13:42:29   Log-Likelihood:                -1358.8
+No. Observations:                       230   AIC:                             2722.
+Df Residuals:                           228   BIC:                             2729.
+Df Model:                                 1                                         
+Covariance Type:                  nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const        213.1330     16.375     13.016      0.000     180.868     245.398
+S&P 500        0.3270      0.010     34.229      0.000       0.308       0.346
+==============================================================================
+Omnibus:                        0.100   Durbin-Watson:                   0.389
+Prob(Omnibus):                  0.951   Jarque-Bera (JB):                0.027
+Skew:                          -0.025   Prob(JB):                        0.987
+Kurtosis:                       3.014   Cond. No.                     4.76e+03
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The condition number is large, 4.76e+03. This might indicate that there are
+strong multicollinearity or other numerical problems.
