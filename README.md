@@ -7,7 +7,7 @@ Data and scripts to replicate plots of labor market trends.
 Install python 3.12 and then create a virtual environment with (Mac OS/Linux/bash):
 
     python3.12 -m venv venv
-    source activate venv
+    source activate venv/bin/activate
     pip install -r requirements.txt
 
 Or (Windows/PowerShell):
