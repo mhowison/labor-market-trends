@@ -25,6 +25,9 @@ Run the analysis pipeline using the `scons` command in the root directory of the
 * [Russell 3000 data](https://finance.yahoo.com/quote/%5ERUA/history/?frequency=1mo&period1=946684800&period2=1765807990)
 * [MSCI World data](https://finance.yahoo.com/quote/%5E990100-USD-STRD/history/?frequency=1mo&period1=946684800&period2=1766158482)
 * [Indeed Hiring Lab data](https://data.indeed.com/#/postings)
+* [Tromlinson et al. 2025, Table 5](https://arxiv.org/html/2507.07935v5)
+* [Anthropic Economic Index - Job Exposure](https://huggingface.co/datasets/Anthropic/EconomicIndex/commits/main/labor_market_impacts) (commit 7a1cc3c)
+* [AIOE Scores by Occupation](https://github.com/AIOE-Data/AIOE/blob/main/AIOE_DataAppendix.xlsx)(commit 3a89310)
 
 ## License
 
