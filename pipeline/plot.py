@@ -1,4 +1,6 @@
 import json
+import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 from pandas import DateOffset
@@ -102,6 +104,60 @@ def PlotTrends(source, target, env):
         fontweight="bold"
     )
     # Output
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+def PlotAIExposure(source, target, env):
+    """
+    Pairwise scatterplots and correlations between AI exposure measures.
+    """
+    data = pd.read_csv(str(source[0]))
+    measures = ["aioe", "anthropic", "tomlinson"]
+    labels = {"aioe": "AIOE", "anthropic": "Anthropic", "tomlinson": "Tomlinson"}
+    n = len(measures)
+
+    fig, axes = plt.subplots(n, n, figsize=(9, 9))
+
+    for i, row_var in enumerate(measures):
+        for j, col_var in enumerate(measures):
+            ax = axes[i, j]
+            if i == j:
+                # Diagonal: histogram
+                ax.hist(data[row_var].dropna(), bins=10, color="#385CC3", alpha=0.7, edgecolor="white")
+                ax.set_ylabel("Count" if j == 0 else "")
+            elif i > j:
+                # Lower triangle: scatterplot
+                mask = data[[row_var, col_var]].dropna().index
+                ax.scatter(data.loc[mask, col_var], data.loc[mask, row_var],
+                           color="#385CC3", alpha=0.7, s=30, edgecolors="white", linewidths=0.5)
+                # Fit line
+                x, y = data.loc[mask, col_var], data.loc[mask, row_var]
+                m, b = np.polyfit(x, y, 1)
+                x_line = np.linspace(x.min(), x.max(), 100)
+                ax.plot(x_line, m * x_line + b, color="#808080", lw=1, ls="--")
+            else:
+                # Upper triangle: correlation text
+                mask = data[[row_var, col_var]].dropna().index
+                r = data.loc[mask, row_var].corr(data.loc[mask, col_var])
+                ax.text(0.5, 0.5, f"r = {r:.2f}", transform=ax.transAxes,
+                        ha="center", va="center", fontsize=16, fontweight="bold")
+                ax.set_xticks([])
+                ax.set_yticks([])
+
+            # Axis labels on edges only
+            if i == n - 1:
+                ax.set_xlabel(labels[col_var])
+            else:
+                ax.set_xticklabels([])
+            if j == 0 and i != j:
+                ax.set_ylabel(labels[row_var])
+            elif i != j:
+                ax.set_yticklabels([])
+
+            for spine in ["top", "right"]:
+                ax.spines[spine].set_visible(False)
+
     plt.tight_layout()
     plt.savefig(str(target[0]))
     plt.savefig(str(target[1]), dpi=300)

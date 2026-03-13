@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from pipeline.data import DataStock, DataFred, DataIndeed, DataMerge, DataAIExposure
 from pipeline.model import ModelPreCovidOLS
-from pipeline.plot import PlotTrends
+from pipeline.plot import PlotTrends, PlotAIExposure
 
 env = Environment(env=os.environ)
 
@@ -99,4 +99,13 @@ env.Command(
     ],
     target=[scratch_dir / "ai_exposure.csv"],
     action=DataAIExposure
+)
+
+env.Command(
+    source=[scratch_dir / "ai_exposure.csv"],
+    target=[
+        output_dir / "ai_exposure.pdf",
+        output_dir / "ai_exposure.png",
+    ],
+    action=PlotAIExposure
 )
