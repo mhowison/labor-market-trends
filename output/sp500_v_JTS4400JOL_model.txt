@@ -3,8 +3,8 @@
 Dep. Variable:     Job Openings: Retail   R-squared:                       0.816
 Model:                              OLS   Adj. R-squared:                  0.815
 Method:                   Least Squares   F-statistic:                     1009.
-Date:                  Fri, 19 Dec 2025   Prob (F-statistic):           1.13e-85
-Time:                          13:42:29   Log-Likelihood:                -1324.0
+Date:                  Fri, 13 Mar 2026   Prob (F-statistic):           1.13e-85
+Time:                          07:14:55   Log-Likelihood:                -1324.0
 No. Observations:                   230   AIC:                             2652.
 Df Residuals:                       228   BIC:                             2659.
 Df Model:                             1                                         

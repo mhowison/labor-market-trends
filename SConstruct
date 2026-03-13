@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from pipeline.data import DataStock, DataFred, DataIndeed, DataMerge
+from pipeline.data import DataStock, DataFred, DataIndeed, DataMerge, DataAIExposure
 from pipeline.model import ModelPreCovidOLS
 from pipeline.plot import PlotTrends
 
@@ -89,3 +89,14 @@ for x, y in comparisons:
         ],
         action=PlotTrends
     )
+
+env.Command(
+    source=[
+        input_dir / "AIOE_DataAppendix.xlsx",
+        input_dir / "anthropic_economic_index_job_exposure.csv",
+        input_dir / "oews_national_M2024_dl.xlsx",
+        input_dir / "tomlinson_et_al_table5.tsv",
+    ],
+    target=[scratch_dir / "ai_exposure.csv"],
+    action=DataAIExposure
+)

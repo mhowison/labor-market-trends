@@ -3,8 +3,8 @@
 Dep. Variable:             Indeed: AI   R-squared:                       0.451
 Model:                            OLS   Adj. R-squared:                  0.406
 Method:                 Least Squares   F-statistic:                     9.877
-Date:                Fri, 19 Dec 2025   Prob (F-statistic):            0.00849
-Time:                        13:42:28   Log-Likelihood:                -46.129
+Date:                Fri, 13 Mar 2026   Prob (F-statistic):            0.00849
+Time:                        07:14:56   Log-Likelihood:                -46.129
 No. Observations:                  14   AIC:                             96.26
 Df Residuals:                      12   BIC:                             97.54
 Df Model:                           1                                         
