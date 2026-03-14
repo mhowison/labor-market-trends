@@ -96,6 +96,9 @@ env.Command(
         input_dir / "anthropic_economic_index_job_exposure.csv",
         input_dir / "oews_national_M2024_dl.xlsx",
         input_dir / "tomlinson_et_al_table5.tsv",
+        input_dir / "eisfeldt_et_al_genaiexp_estz_occscores.csv",
+        input_dir / "eloundou_et_al_occ_level.csv",
+        input_dir / "webb_exposure_by_occ1990dd_lswt2010.xls",
     ],
     target=[scratch_dir / "ai_exposure.csv"],
     action=DataAIExposure
