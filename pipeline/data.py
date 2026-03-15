@@ -90,6 +90,17 @@ def DataAIExposure(source, target, env):
     detailed = oews[oews["O_GROUP"] == "detailed"][["OCC_CODE", "OCC_TITLE", "TOT_EMP"]].copy()
     detailed["TOT_EMP"] = pd.to_numeric(detailed["TOT_EMP"], errors="coerce")
 
+    # Verify all source SOC codes map to an OEWS detailed occupation
+    oews_codes = set(detailed["OCC_CODE"])
+    for name, codes in [
+        ("AIOE", aioe["occ_code"]),
+        ("Anthropic", anthropic["occ_code"]),
+        ("Eisfeldt", eisfeldt["occ_code"]),
+        ("Eloundou", eloundou["occ_code"]),
+    ]:
+        unmapped = set(codes) - oews_codes
+        print(f"{name}: SOC codes not found in OEWS: {sorted(unmapped)}")
+
     # Merge with OEWS employment
     merged = pd.merge(merged, detailed, left_on="occ_code", right_on="OCC_CODE", how="inner")
 
@@ -170,7 +181,12 @@ def DataAIExposure(source, target, env):
                 return soc
         return None
     webb["major_code"] = webb["occ1990dd"].apply(map_occ1990dd)
-    webb = webb.dropna(subset=["major_code", "pct_ai"])
+
+    # Verify all Webb occ1990dd codes map to a SOC major group
+    unmapped_webb = webb.loc[webb["major_code"].isna(), "occ1990dd"]
+    assert unmapped_webb.empty, f"Webb: occ1990dd codes not mapped to SOC major group: {sorted(unmapped_webb)}"
+
+    webb = webb.dropna(subset=["pct_ai"])
     webb_agg = webb.groupby("major_code").apply(
         lambda g: (g["pct_ai"] * g["lswt2010"]).sum() / g["lswt2010"].sum()
     ).reset_index(name="webb_pct_ai")
