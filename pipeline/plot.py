@@ -113,15 +113,14 @@ def PlotAIExposure(source, target, env):
     Pairwise scatterplots and correlations between AI exposure measures.
     """
     data = pd.read_csv(str(source[0]))
-    measures = ["aioe", "anthropic", "tomlinson", "eisfeldt", "eloundou", "webb"]
     labels = {
         "aioe": "AIOE",
         "anthropic": "Anthropic",
         "tomlinson": "Tomlinson",
         "eisfeldt": "Eisfeldt",
         "eloundou": "Eloundou",
-        "webb": "Webb",
     }
+    measures = list(labels.keys())
     n = len(measures)
 
     fig, axes = plt.subplots(n, n, figsize=(18, 18))

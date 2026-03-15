@@ -69,12 +69,12 @@ def DataAIExposure(source, target, env):
     anthropic = anthropic[["occ_code", "title", "observed_exposure"]]
 
     # Load Eisfeldt et al. GenAI exposure data
-    eisfeldt = pd.read_csv(str(source[4]))
+    eisfeldt = pd.read_csv(str(source[2]))
     eisfeldt = eisfeldt.rename(columns={"soc2010": "occ_code"})
     eisfeldt = eisfeldt[["occ_code", "genaiexp_estz_total"]]
 
     # Load Eloundou et al. exposure data (O*NET codes → 6-digit SOC)
-    eloundou = pd.read_csv(str(source[5]))
+    eloundou = pd.read_csv(str(source[3]))
     eloundou["occ_code"] = eloundou["O*NET-SOC Code"].str[:7]
     eloundou = eloundou.groupby("occ_code")["dv_rating_beta"].mean().reset_index()
 
@@ -84,7 +84,7 @@ def DataAIExposure(source, target, env):
     merged = pd.merge(merged, eloundou, on="occ_code", how="outer")
 
     # Load OEWS data
-    oews = pd.read_excel(str(source[2]))
+    oews = pd.read_excel(str(source[5]))
 
     # Get detailed occupation employment
     detailed = oews[oews["O_GROUP"] == "detailed"][["OCC_CODE", "OCC_TITLE", "TOT_EMP"]].copy()
@@ -136,60 +136,7 @@ def DataAIExposure(source, target, env):
     weighted["Major Group"] = weighted["Major Group"].replace(title_fixes)
 
     # Load Tomlinson data
-    tomlinson = pd.read_csv(str(source[3]), sep="\t")
-
-    # Load Webb data (occ1990dd codes → SOC major groups via crosswalk)
-    webb = pd.read_csv(str(source[6]))
-    occ1990dd_to_soc_major = [
-        (4, 22, "11-0000"),    # Management
-        (23, 37, "13-0000"),   # Business and Financial Operations
-        (43, 59, "17-0000"),   # Architecture and Engineering
-        (64, 68, "15-0000"),   # Computer and Mathematical
-        (69, 83, "19-0000"),   # Life, Physical, and Social Science
-        (84, 106, "29-0000"),  # Healthcare Practitioners and Technical
-        (154, 159, "25-0000"), # Education, Training, and Library
-        (163, 163, "21-0000"), # Community and Social Service
-        (164, 165, "25-0000"), # Education (librarians, archivists)
-        (166, 169, "19-0000"), # Social Science
-        (173, 177, "21-0000"), # Community and Social Service
-        (178, 178, "23-0000"), # Legal
-        (183, 199, "27-0000"), # Arts, Design, Entertainment, Sports, Media
-        (203, 208, "29-0000"), # Healthcare Technical
-        (214, 218, "17-0000"), # Engineering technicians
-        (223, 224, "19-0000"), # Science technicians
-        (226, 228, "53-0000"), # Pilots, ATC, broadcast ops
-        (229, 229, "15-0000"), # Computer programmers
-        (233, 233, "51-0000"), # CNC programmers
-        (234, 234, "23-0000"), # Paralegals
-        (235, 235, "15-0000"), # Technicians NEC
-        (243, 285, "41-0000"), # Sales
-        (303, 389, "43-0000"), # Office and Administrative Support
-        (405, 408, "37-0000"), # Building and Grounds Cleaning
-        (413, 427, "33-0000"), # Protective Service
-        (433, 444, "35-0000"), # Food Preparation and Serving
-        (445, 448, "31-0000"), # Healthcare Support
-        (450, 472, "39-0000"), # Personal Care and Service
-        (473, 498, "45-0000"), # Farming, Fishing, and Forestry
-        (503, 549, "49-0000"), # Installation, Maintenance, and Repair
-        (558, 617, "47-0000"), # Construction and Extraction
-        (628, 799, "51-0000"), # Production
-        (803, 889, "53-0000"), # Transportation and Material Moving
-    ]
-    def map_occ1990dd(code):
-        for lo, hi, soc in occ1990dd_to_soc_major:
-            if lo <= code <= hi:
-                return soc
-        return None
-    webb["major_code"] = webb["occ1990dd"].apply(map_occ1990dd)
-
-    # Verify all Webb occ1990dd codes map to a SOC major group
-    unmapped_webb = webb.loc[webb["major_code"].isna(), "occ1990dd"]
-    assert unmapped_webb.empty, f"Webb: occ1990dd codes not mapped to SOC major group: {sorted(unmapped_webb)}"
-
-    webb = webb.dropna(subset=["pct_ai"])
-    webb_agg = webb.groupby("major_code").apply(
-        lambda g: (g["pct_ai"] * g["lswt2010"]).sum() / g["lswt2010"].sum()
-    ).reset_index(name="webb_pct_ai")
+    tomlinson = pd.read_csv(str(source[4]), sep="\t")
 
     # Merge with Tomlinson and Webb
     columns = {
@@ -200,11 +147,9 @@ def DataAIExposure(source, target, env):
         "Score": "tomlinson",
         "genaiexp_estz_total": "eisfeldt",
         "dv_rating_beta": "eloundou",
-        "webb_pct_ai": "webb",
     }
     result = (pd
         .merge(weighted, tomlinson, on="Major Group", how="outer")
-        .merge(webb_agg, on="major_code", how="outer")
         .rename(columns=columns)
         .loc[:, columns.values()]
     )
