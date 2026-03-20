@@ -57,7 +57,7 @@ def DataMerge(source, target, env):
 
 def DataAIExposure(source, target, env):
     """
-    Merge AI exposure measures from multiple sources at the major occupation level.
+    Merge AI exposure measures from multiple sources, aggregated by Indeed sector.
     """
     # Load AIOE data
     aioe = pd.read_excel(str(source[0]), sheet_name="Appendix A")
@@ -78,10 +78,16 @@ def DataAIExposure(source, target, env):
     eloundou["occ_code"] = eloundou["O*NET-SOC Code"].str[:7]
     eloundou = eloundou.groupby("occ_code")["dv_rating_beta"].mean().reset_index()
 
-    # Merge AIOE + Anthropic + Eisfeldt + Eloundou on occupation code
+    # Load Tomlinson et al. AI applicability scores
+    tomlinson = pd.read_csv(str(source[4]))
+    tomlinson = tomlinson.rename(columns={"SOC Code": "occ_code"})
+    tomlinson = tomlinson[["occ_code", "ai_applicability_score"]]
+
+    # Merge all five sources on occupation code
     merged = pd.merge(aioe, anthropic, on="occ_code", how="outer")
     merged = pd.merge(merged, eisfeldt, on="occ_code", how="outer")
     merged = pd.merge(merged, eloundou, on="occ_code", how="outer")
+    merged = pd.merge(merged, tomlinson, on="occ_code", how="outer")
 
     # Load OEWS data
     oews = pd.read_excel(str(source[5]))
@@ -97,6 +103,7 @@ def DataAIExposure(source, target, env):
         ("Anthropic", anthropic["occ_code"]),
         ("Eisfeldt", eisfeldt["occ_code"]),
         ("Eloundou", eloundou["occ_code"]),
+        ("Tomlinson", tomlinson["occ_code"]),
     ]:
         unmapped = set(codes) - oews_codes
         print(f"{name}: SOC codes not found in OEWS: {sorted(unmapped)}")
@@ -104,54 +111,30 @@ def DataAIExposure(source, target, env):
     # Merge with OEWS employment
     merged = pd.merge(merged, detailed, left_on="occ_code", right_on="OCC_CODE", how="inner")
 
-    # Derive major group code
-    merged["major_code"] = merged["occ_code"].str[:2] + "-0000"
+    # Load Indeed sector-SOC mapping
+    sector_map = pd.read_csv(str(source[6]))
+    merged = pd.merge(merged, sector_map[["OCC_CODE", "sectorName"]], on="OCC_CODE", how="left")
 
-    # Compute employment-weighted averages
+    # Compute employment-weighted averages by Indeed sector
     def weighted_avg(group, col):
         mask = group[col].notna() & group["TOT_EMP"].notna()
         if not mask.any():
             return float("nan")
         return (group.loc[mask, col] * group.loc[mask, "TOT_EMP"]).sum() / group.loc[mask, "TOT_EMP"].sum()
 
-    weighted = merged.groupby("major_code").apply(
-        lambda g: pd.Series({
-            "AIOE": weighted_avg(g, "AIOE"),
-            "observed_exposure": weighted_avg(g, "observed_exposure"),
-            "genaiexp_estz_total": weighted_avg(g, "genaiexp_estz_total"),
-            "dv_rating_beta": weighted_avg(g, "dv_rating_beta"),
-        })
-    ).reset_index()
-
-    # Get major group titles from OEWS
-    major = oews[oews["O_GROUP"] == "major"][["OCC_CODE", "OCC_TITLE"]].copy()
-    weighted = pd.merge(weighted, major, left_on="major_code", right_on="OCC_CODE", how="left")
-
-    # Normalize titles to match Tomlinson naming
-    weighted["Major Group"] = weighted["OCC_TITLE"].str.replace(r" Occupations$", "", regex=True)
-    title_fixes = {
-        "Arts, Design, Entertainment, Sports, and Media": "Arts, Design, Entertainment, Sports, Media",
-        "Building and Grounds Cleaning and Maintenance": "Building, Grounds Cleaning, Maintenance",
-    }
-    weighted["Major Group"] = weighted["Major Group"].replace(title_fixes)
-
-    # Load Tomlinson data
-    tomlinson = pd.read_csv(str(source[4]), sep="\t")
-
-    # Merge with Tomlinson and Webb
     columns = {
-        "major_code": "soc2_code",
-        "OCC_TITLE": "soc2_title",
         "AIOE": "aioe",
         "observed_exposure": "anthropic",
-        "Score": "tomlinson",
+        "ai_applicability_score": "tomlinson",
         "genaiexp_estz_total": "eisfeldt",
         "dv_rating_beta": "eloundou",
     }
-    result = (pd
-        .merge(weighted, tomlinson, on="Major Group", how="outer")
-        .rename(columns=columns)
-        .loc[:, columns.values()]
-    )
+
+    result = merged.groupby("sectorName", group_keys=False).apply(
+        lambda g: pd.Series({
+            new: weighted_avg(g, old) for old, new in columns.items()
+        }),
+        include_groups=False,
+    ).reset_index()
 
     result.to_csv(str(target[0]), index=False)
