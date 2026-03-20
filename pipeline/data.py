@@ -55,6 +55,36 @@ def DataMerge(source, target, env):
     data = [pd.read_csv(f).set_index("Month") for f in map(str, source)]
     pd.concat(data, axis=1).to_csv(str(target[0]))
 
+def DataIndeedPostingIndex(source, target, env):
+    """
+    Compute percent change in average posting index pre vs post ChatGPT launch,
+    by Indeed sector.
+    """
+    from dateutil.relativedelta import relativedelta
+
+    data = pd.read_csv(str(source[0]))
+    data["date"] = pd.to_datetime(data["dateString"])
+
+    window_years = int(source[1].read()) if len(source) > 1 else 1
+    chatgpt = DATES["ChatGPT"]
+    pre_start = chatgpt - relativedelta(years=window_years)
+    post_end = chatgpt + relativedelta(years=window_years)
+
+    pre = data[(data["date"] >= pre_start) & (data["date"] < chatgpt)]
+    post = data[(data["date"] >= chatgpt) & (data["date"] < post_end)]
+
+    pre_avg = pre.groupby("sectorName")["value"].mean()
+    post_avg = post.groupby("sectorName")["value"].mean()
+
+    result = pd.DataFrame({
+        "sectorName": pre_avg.index,
+        "pre_avg": pre_avg.values,
+        "post_avg": post_avg.reindex(pre_avg.index).values,
+    })
+    result["pct_change"] = (result["post_avg"] - result["pre_avg"]) / result["pre_avg"] * 100
+
+    result.to_csv(str(target[0]), index=False)
+
 def DataAIExposure(source, target, env):
     """
     Merge AI exposure measures from multiple sources, aggregated by Indeed sector.

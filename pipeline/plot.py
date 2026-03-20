@@ -167,3 +167,53 @@ def PlotAIExposure(source, target, env):
     plt.tight_layout()
     plt.savefig(str(target[0]))
     plt.savefig(str(target[1]), dpi=300)
+
+def PlotIndeedPostingsAIExposure(source, target, env):
+    """
+    Scatterplots of Indeed posting index percent change vs each AI exposure measure.
+    """
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+    data = pd.merge(postings, exposure, on="sectorName")
+
+    labels = {
+        "aioe": "AIOE",
+        "anthropic": "Anthropic",
+        "tomlinson": "Tomlinson",
+        "eisfeldt": "Eisfeldt",
+        "eloundou": "Eloundou",
+    }
+    measures = list(labels.keys())
+    data["average"] = data[measures].mean(axis=1)
+    labels["average"] = "Average"
+    all_measures = measures + ["average"]
+    n = len(all_measures)
+
+    fig, axes = plt.subplots(1, n, figsize=(4 * n, 4))
+
+    for i, measure in enumerate(all_measures):
+        ax = axes[i]
+        mask = data[["pct_change", measure]].dropna().index
+        x = data.loc[mask, measure]
+        y = data.loc[mask, "pct_change"]
+
+        ax.scatter(x, y, color="#385CC3", alpha=0.7, s=30,
+                   edgecolors="white", linewidths=0.5)
+
+        # Fit line
+        m, b = np.polyfit(x, y, 1)
+        x_line = np.linspace(x.min(), x.max(), 100)
+        ax.plot(x_line, m * x_line + b, color="#808080", lw=1, ls="--")
+
+        # Correlation
+        r = x.corr(y)
+        ax.set_title(f"{labels[measure]}  (r = {r:.2f})")
+        ax.set_xlabel(labels[measure])
+        if i == 0:
+            ax.set_ylabel("Posting Index % Change")
+        for spine in ["top", "right"]:
+            ax.spines[spine].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
