@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from pipeline.data import DataStock, DataFred, DataIndeed, DataIndeedPostingIndex, DataMerge, DataAIExposure
-from pipeline.model import ModelPreCovidOLS
+from pipeline.model import ModelIndeedPostingsAIExposure, ModelPreCovidOLS
 from pipeline.plot import PlotTrends, PlotAIExposure, PlotIndeedPostingsAIExposure
 
 env = Environment(env=os.environ)
@@ -94,6 +94,18 @@ env.Command(
     source=[input_dir / "indeed-job-postings-sector-index.csv"],
     target=[scratch_dir / "indeed_posting_index.csv"],
     action=DataIndeedPostingIndex
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index.csv",
+        scratch_dir / "ai_exposure.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_ai_exposure_model.txt",
+        scratch_dir / "indeed_postings_ai_exposure_model.csv",
+    ],
+    action=ModelIndeedPostingsAIExposure
 )
 
 env.Command(

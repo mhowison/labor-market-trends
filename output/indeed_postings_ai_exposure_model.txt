@@ -1,0 +1,29 @@
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                  value   R-squared:                       0.474
+Model:                            OLS   Adj. R-squared:                  0.474
+Method:                 Least Squares   F-statistic:                     7699.
+Date:                Tue, 24 Mar 2026   Prob (F-statistic):               0.00
+Time:                        13:17:45   Log-Likelihood:            -1.9513e+05
+No. Observations:               42744   AIC:                         3.903e+05
+Df Residuals:                   42738   BIC:                         3.903e+05
+Df Model:                           5                                         
+Covariance Type:            nonrobust                                         
+======================================================================================
+                         coef    std err          t      P>|t|      [0.025      0.975]
+--------------------------------------------------------------------------------------
+const                165.9740      0.195    851.868      0.000     165.592     166.356
+post_chatgpt_year1   -25.9728      0.276    -94.262      0.000     -26.513     -25.433
+post_chatgpt_year2   -46.2058      0.276   -167.704      0.000     -46.746     -45.666
+ai_exposure            4.6017      0.195     23.618      0.000       4.220       4.984
+year1_x_exposure     -16.3741      0.276    -59.425      0.000     -16.914     -15.834
+year2_x_exposure     -22.6443      0.292    -77.647      0.000     -23.216     -22.073
+==============================================================================
+Omnibus:                     1001.487   Durbin-Watson:                   1.717
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):             1069.637
+Skew:                           0.385   Prob(JB):                    5.39e-233
+Kurtosis:                       2.907   Cond. No.                         3.79
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
