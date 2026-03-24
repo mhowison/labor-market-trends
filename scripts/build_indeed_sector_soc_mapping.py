@@ -1,5 +1,23 @@
 """
 Build a crosswalk mapping SOC codes from OEWS to Indeed sectorName values.
+
+Claude Code explanation of the mapping:
+
+>  The mapping is complete. Created input/indeed-sector-soc-mapping.csv with 831 detailed SOC
+>  occupation codes mapped to all 41 Indeed sector names. The mapping uses:
+>
+>  - Specific overrides for ~300 codes where the occupation clearly belongs to a particular sector
+>  (e.g., Software Developers → Software Development, Registered Nurses → Nursing)
+>  - Sub-prefix rules for groups like 27-3/27-4 (Media & Communications) and 29-12 (Physicians &
+>  Surgeons)
+>  - Major group defaults for remaining codes (e.g., SOC 51-xxxx → Production & Manufacturing,
+>  49-xxxx → Installation & Maintenance)
+>
+>  Notable mapping decisions for SOC groups without a direct Indeed match:
+>  - Construction & Extraction (47) → Installation & Maintenance (closest available)
+>  - Farming, Fishing, Forestry (45) → Production & Manufacturing (primary production roles)
+>
+>  The build script is at scripts/build_indeed_sector_soc_mapping.py for reproducibility.
 """
 
 import csv
