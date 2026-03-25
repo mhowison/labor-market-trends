@@ -72,12 +72,12 @@ OCC_CODE,OCC_TITLE,sectorName
 15-1211,Computer Systems Analysts,IT Systems & Solutions
 15-1212,Information Security Analysts,IT Systems & Solutions
 15-1221,Computer and Information Research Scientists,Software Development
-15-1231,Computer Network Support Specialists,IT Systems & Solutions
-15-1232,Computer User Support Specialists,IT Systems & Solutions
+15-1231,Computer Network Support Specialists,"IT Infrastructure, Operations & Support"
+15-1232,Computer User Support Specialists,"IT Infrastructure, Operations & Support"
 15-1241,Computer Network Architects,IT Systems & Solutions
-15-1242,Database Administrators,IT Systems & Solutions
+15-1242,Database Administrators,"IT Infrastructure, Operations & Support"
 15-1243,Database Architects,IT Systems & Solutions
-15-1244,Network and Computer Systems Administrators,IT Systems & Solutions
+15-1244,Network and Computer Systems Administrators,"IT Infrastructure, Operations & Support"
 15-1251,Computer Programmers,Software Development
 15-1252,Software Developers,Software Development
 15-1253,Software Quality Assurance Analysts and Testers,Software Development
@@ -625,7 +625,7 @@ OCC_CODE,OCC_TITLE,sectorName
 47-5081,Helpers--Extraction Workers,Installation & Maintenance
 47-5099,"Extraction Workers, All Other",Installation & Maintenance
 49-1011,"First-Line Supervisors of Mechanics, Installers, and Repairers",Installation & Maintenance
-49-2011,"Computer, Automated Teller, and Office Machine Repairers",Installation & Maintenance
+49-2011,"Computer, Automated Teller, and Office Machine Repairers","IT Infrastructure, Operations & Support"
 49-2021,"Radio, Cellular, and Tower Equipment Installers and Repairers",Installation & Maintenance
 49-2022,"Telecommunications Equipment Installers and Repairers, Except Line Installers",Installation & Maintenance
 49-2091,Avionics Technicians,Installation & Maintenance

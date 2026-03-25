@@ -111,12 +111,12 @@ specific = {
     "15-1211": "IT Systems & Solutions",   # Computer Systems Analysts
     "15-1212": "IT Systems & Solutions",   # Information Security Analysts
     "15-1221": "Software Development",     # Computer and Information Research Scientists
-    "15-1231": "IT Systems & Solutions",   # Computer Network Support Specialists
-    "15-1232": "IT Systems & Solutions",   # Computer User Support Specialists
+    "15-1231": "IT Infrastructure, Operations & Support",  # Computer Network Support Specialists
+    "15-1232": "IT Infrastructure, Operations & Support",  # Computer User Support Specialists
     "15-1241": "IT Systems & Solutions",   # Computer Network Architects
-    "15-1242": "IT Systems & Solutions",   # Database Administrators
+    "15-1242": "IT Infrastructure, Operations & Support",  # Database Administrators
     "15-1243": "IT Systems & Solutions",   # Database Architects
-    "15-1244": "IT Systems & Solutions",   # Network and Computer Systems Administrators
+    "15-1244": "IT Infrastructure, Operations & Support",  # Network and Computer Systems Administrators
     "15-1251": "Software Development",     # Computer Programmers
     "15-1252": "Software Development",     # Software Developers
     "15-1253": "Software Development",     # Software QA Analysts and Testers
@@ -296,6 +296,9 @@ specific = {
     "43-6012": "Legal",                 # Legal Secretaries
     "43-9041": "Banking & Finance",     # Insurance Claims Processing
     "43-9111": "Data & Analytics",      # Statistical Assistants
+
+    # Installation, Maintenance, and Repair (1) overrides
+    "49-2011": "IT Infrastructure, Operations & Support",  # Computer, Automated Teller, and Office Machine Repairers
 
     # Transportation and Material Moving (53) overrides
     "53-2031": "Hospitality & Tourism",  # Flight Attendants
