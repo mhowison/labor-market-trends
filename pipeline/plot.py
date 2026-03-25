@@ -193,9 +193,8 @@ def PlotIndeedPostingsAIExposure(source, target, env):
 
     for i, measure in enumerate(all_measures):
         ax = axes[i]
-        mask = data[["pct_change", measure]].dropna().index
-        x = data.loc[mask, measure]
-        y = data.loc[mask, "pct_change"]
+        x = data[measure]
+        y = data["pct_change"]
 
         ax.scatter(x, y, color="#385CC3", alpha=0.7, s=30,
                    edgecolors="white", linewidths=0.5)

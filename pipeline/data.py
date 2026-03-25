@@ -83,7 +83,7 @@ def DataIndeedPostingIndex(source, target, env):
     })
     result["pct_change"] = (result["post_avg"] - result["pre_avg"]) / result["pre_avg"] * 100
 
-    result.to_csv(str(target[0]), index=False)
+    result.sort_values("pct_change", ascending=False).to_csv(str(target[0]), index=False)
 
 def DataAIExposure(source, target, env):
     """

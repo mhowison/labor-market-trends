@@ -92,7 +92,7 @@ for x, y in comparisons:
 
 env.Command(
     source=[input_dir / "indeed-job-postings-sector-index.csv"],
-    target=[scratch_dir / "indeed_posting_index.csv"],
+    target=[output_dir / "indeed_posting_index_pre_post_chatgpt.csv"],
     action=DataIndeedPostingIndex
 )
 
@@ -119,23 +119,23 @@ env.Command(
         input_dir / "indeed-sector-soc-mapping.csv",
         input_dir / "soc_2010_to_2018_crosswalk.xlsx",
     ],
-    target=[scratch_dir / "ai_exposure.csv"],
+    target=[output_dir / "indeed_sector_ai_exposure.csv"],
     action=DataAIExposure
 )
 
 env.Command(
-    source=[scratch_dir / "ai_exposure.csv"],
+    source=[output_dir / "indeed_sector_ai_exposure.csv"],
     target=[
-        output_dir / "ai_exposure.pdf",
-        output_dir / "ai_exposure.png",
+        output_dir / "indeed_sector_ai_exposure.pdf",
+        output_dir / "indeed_sector_ai_exposure.png",
     ],
     action=PlotAIExposure
 )
 
 env.Command(
     source=[
-        scratch_dir / "indeed_posting_index.csv",
-        scratch_dir / "ai_exposure.csv",
+        output_dir / "indeed_posting_index_pre_post_chatgpt.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
     ],
     target=[
         output_dir / "indeed_postings_ai_exposure.pdf",
