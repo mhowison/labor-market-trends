@@ -117,6 +117,7 @@ env.Command(
         input_dir / "tomlinson_et_al_ai_applicability_scores.csv",
         input_dir / "oews_national_M2024_dl.xlsx",
         input_dir / "indeed-sector-soc-mapping.csv",
+        input_dir / "soc_2010_to_2018_crosswalk.xlsx",
     ],
     target=[scratch_dir / "ai_exposure.csv"],
     action=DataAIExposure

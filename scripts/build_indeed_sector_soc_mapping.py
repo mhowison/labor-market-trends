@@ -63,6 +63,7 @@ specific = {
     "11-9071": "Hospitality & Tourism",  # Gambling Managers
     "11-9072": "Arts & Entertainment",   # Entertainment and Recreation Managers
     "11-9081": "Hospitality & Tourism",  # Lodging Managers
+    "11-9021": "Project Management",  # Construction Managers
     "11-9111": "Management",          # Medical and Health Services Managers
     "11-9121": "Scientific Research & Development",  # Natural Sciences Managers
     "11-9141": "Sales",               # Property, Real Estate Managers
@@ -88,6 +89,7 @@ specific = {
     "13-1141": "Human Resources",        # Compensation, Benefits Specialists
     "13-1151": "Human Resources",        # Training and Development Specialists
     "13-1161": "Marketing",              # Market Research Analysts
+    "13-1198": "Project Management",     # Project Management Specialists and Business Operations Specialists, All Other
     "13-1199": "Management",             # Business Operations Specialists
     "13-1020": "Management",             # Buyers and Purchasing Agents
     "13-2011": "Accounting",             # Accountants and Auditors

@@ -47,7 +47,6 @@ def ModelIndeedPostingsAIExposure(source, target, env):
         "post_chatgpt_year1", "post_chatgpt_year2",
         "ai_exposure", "year1_x_exposure", "year2_x_exposure",
     ]
-    data = data.dropna(subset=["ai_exposure"])
     y = data["value"].astype(float)
     X = sm.add_constant(data[regressors])
     model = sm.OLS(y, X).fit()

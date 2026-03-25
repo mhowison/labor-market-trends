@@ -89,19 +89,32 @@ def DataAIExposure(source, target, env):
     """
     Merge AI exposure measures from multiple sources, aggregated by Indeed sector.
     """
-    # Load AIOE data
+    # Load SOC 2010→2018 crosswalk
+    crosswalk = pd.read_excel(str(source[7]), header=8)
+    crosswalk = crosswalk.rename(columns={
+        "2010 SOC Code": "soc2010",
+        "2018 SOC Code": "soc2018",
+    })[["soc2010", "soc2018"]]
+
+    # Load AIOE data (SOC 2010) and map to SOC 2018
     aioe = pd.read_excel(str(source[0]), sheet_name="Appendix A")
-    aioe = aioe.rename(columns={"SOC Code": "occ_code"})
-    aioe = aioe[["occ_code", "Occupation Title", "AIOE"]]
+    aioe = aioe.rename(columns={"SOC Code": "soc2010"})
+    aioe = aioe[["soc2010", "AIOE"]]
+    aioe = pd.merge(aioe, crosswalk, on="soc2010", how="left")
+    aioe["occ_code"] = aioe["soc2018"].fillna(aioe["soc2010"])
+    aioe = aioe.groupby("occ_code")["AIOE"].mean().reset_index()
 
     # Load Anthropic data
     anthropic = pd.read_csv(str(source[1]))
     anthropic = anthropic[["occ_code", "title", "observed_exposure"]]
 
-    # Load Eisfeldt et al. GenAI exposure data
+    # Load Eisfeldt et al. GenAI exposure data (SOC 2010) and map to SOC 2018
     eisfeldt = pd.read_csv(str(source[2]))
-    eisfeldt = eisfeldt.rename(columns={"soc2010": "occ_code"})
-    eisfeldt = eisfeldt[["occ_code", "genaiexp_estz_total"]]
+    eisfeldt = eisfeldt.rename(columns={"soc2010": "soc2010"})
+    eisfeldt = eisfeldt[["soc2010", "genaiexp_estz_total"]]
+    eisfeldt = pd.merge(eisfeldt, crosswalk, on="soc2010", how="left")
+    eisfeldt["occ_code"] = eisfeldt["soc2018"].fillna(eisfeldt["soc2010"])
+    eisfeldt = eisfeldt.groupby("occ_code")["genaiexp_estz_total"].mean().reset_index()
 
     # Load Eloundou et al. exposure data (O*NET codes → 6-digit SOC)
     eloundou = pd.read_csv(str(source[3]))

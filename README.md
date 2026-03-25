@@ -31,6 +31,7 @@ Run the analysis pipeline using the `scons` command in the root directory of the
 * [Anthropic Economic Index - Job Exposure](https://huggingface.co/datasets/Anthropic/EconomicIndex/commits/main/labor_market_impacts) (commit 7a1cc3c)
 * [AIOE Scores by Occupation](https://github.com/AIOE-Data/AIOE/blob/main/AIOE_DataAppendix.xlsx) (commit 3a89310)
 * [OEWS May 2024 National Table](https://www.bls.gov/oes/tables.htm)
+* [BLS SOC 2010 to 2018 Crosswalk](https://www.bls.gov/soc/2018/soc_2010_to_2018_crosswalk.xlsx)
 
 ## License
 
