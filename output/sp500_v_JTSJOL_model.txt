@@ -3,8 +3,8 @@
 Dep. Variable:           Job Openings   R-squared:                       0.873
 Model:                            OLS   Adj. R-squared:                  0.872
 Method:                 Least Squares   F-statistic:                     1562.
-Date:                Fri, 20 Mar 2026   Prob (F-statistic):          5.23e-104
-Time:                        10:34:12   Log-Likelihood:                -1744.0
+Date:                Thu, 26 Mar 2026   Prob (F-statistic):          5.23e-104
+Time:                        09:08:49   Log-Likelihood:                -1744.0
 No. Observations:                 230   AIC:                             3492.
 Df Residuals:                     228   BIC:                             3499.
 Df Model:                           1                                         

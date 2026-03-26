@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from .data import DATES, load_data
 
 
-def ModelIndeedPostingsAIExposure(source, target, env):
+def ModelIndeedPostingsAIExposureOLS(source, target, env):
     """
     OLS regression of daily Indeed posting index on post-ChatGPT year indicators
     and a time-varying AI exposure control, pooled across sectors.

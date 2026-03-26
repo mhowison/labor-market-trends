@@ -3,8 +3,8 @@
 Dep. Variable:     Job Openings: Healthcare   R-squared:                       0.837
 Model:                                  OLS   Adj. R-squared:                  0.836
 Method:                       Least Squares   F-statistic:                     1172.
-Date:                      Fri, 20 Mar 2026   Prob (F-statistic):           8.32e-92
-Time:                              10:34:11   Log-Likelihood:                -1358.8
+Date:                      Thu, 26 Mar 2026   Prob (F-statistic):           8.32e-92
+Time:                              09:08:49   Log-Likelihood:                -1358.8
 No. Observations:                       230   AIC:                             2722.
 Df Residuals:                           228   BIC:                             2729.
 Df Model:                                 1                                         

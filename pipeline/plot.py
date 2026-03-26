@@ -10,6 +10,7 @@ from matplotlib import rcParams
 rcParams["font.sans-serif"] = "Arial"
 rcParams["font.family"] = "sans-serif"
 
+
 def PlotTrends(source, target, env):
     """
     Plot a comparison of two time series.
@@ -108,6 +109,7 @@ def PlotTrends(source, target, env):
     plt.savefig(str(target[0]))
     plt.savefig(str(target[1]), dpi=300)
 
+
 def PlotAIExposure(source, target, env):
     """
     Pairwise scatterplots and correlations between AI exposure measures.
@@ -168,6 +170,7 @@ def PlotAIExposure(source, target, env):
     plt.savefig(str(target[0]))
     plt.savefig(str(target[1]), dpi=300)
 
+
 def PlotIndeedPostingsAIExposure(source, target, env):
     """
     Scatterplots of Indeed posting index percent change vs each AI exposure measure.
@@ -193,8 +196,7 @@ def PlotIndeedPostingsAIExposure(source, target, env):
         x = data[measure]
         y = data["pct_change"]
 
-        ax.scatter(x, y, color="#385CC3", alpha=0.7, s=30,
-                   edgecolors="white", linewidths=0.5)
+        ax.scatter(x, y, color="none", s=15, edgecolors="black", linewidths=0.75)
 
         # Fit line
         m, b = np.polyfit(x, y, 1)
@@ -203,10 +205,12 @@ def PlotIndeedPostingsAIExposure(source, target, env):
 
         # Correlation
         r = x.corr(y)
-        ax.set_title(f"{labels[measure]}  (r = {r:.2f})")
-        ax.set_xlabel(labels[measure])
+        ax.text(0.28, 0.1, f"R\u00B2 = {r:.2f}", transform=ax.transAxes,
+            ha="right", va="top", fontsize=11)
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0f}%"))
+        ax.set_xlabel(f"AI Exposure ({labels[measure]})")
         if i == 0:
-            ax.set_ylabel("Posting Index % Change")
+            ax.set_ylabel("% Change in Pre/Post ChatGPT Posting Index")
         for spine in ["top", "right"]:
             ax.spines[spine].set_visible(False)
 
@@ -224,15 +228,16 @@ def PlotIndeedPostingsAvgAIExposure(source, target, env):
     data = pd.merge(postings, exposure, on="sectorName")
 
     measures = ["aioe", "anthropic", "tomlinson", "eisfeldt", "eloundou"]
+    for col in measures:
+        data[col] = (data[col] - data[col].mean()) / data[col].std()
     data["average"] = data[measures].mean(axis=1)
 
-    fig, ax = plt.subplots(figsize=(5, 4))
+    fig, ax = plt.subplots(figsize=(5, 5))
 
     x = data["average"]
     y = data["pct_change"]
 
-    ax.scatter(x, y, color="#385CC3", alpha=0.7, s=30,
-               edgecolors="white", linewidths=0.5)
+    ax.scatter(x, y, color="none", s=20, edgecolors="black", linewidths=0.75)
 
     # Fit line
     m, b = np.polyfit(x, y, 1)
@@ -241,9 +246,11 @@ def PlotIndeedPostingsAvgAIExposure(source, target, env):
 
     # Correlation
     r = x.corr(y)
-    ax.set_title(f"Average  (r = {r:.2f})")
-    ax.set_xlabel("Average AI Exposure")
-    ax.set_ylabel("Posting Index % Change")
+    ax.text(0.95, 0.95, f"R\u00B2 = {r:.2f}", transform=ax.transAxes,
+            ha="right", va="top", fontsize=11)
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0f}%"))
+    ax.set_xlabel("Average Normalized AI Exposure")
+    ax.set_ylabel("% Change in Pre/Post ChatGPT Posting Index")
     for spine in ["top", "right"]:
         ax.spines[spine].set_visible(False)
 
