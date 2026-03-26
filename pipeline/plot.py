@@ -184,14 +184,11 @@ def PlotIndeedPostingsAIExposure(source, target, env):
         "eloundou": "Eloundou",
     }
     measures = list(labels.keys())
-    data["average"] = data[measures].mean(axis=1)
-    labels["average"] = "Average"
-    all_measures = measures + ["average"]
-    n = len(all_measures)
+    n = len(measures)
 
     fig, axes = plt.subplots(1, n, figsize=(4 * n, 4))
 
-    for i, measure in enumerate(all_measures):
+    for i, measure in enumerate(measures):
         ax = axes[i]
         x = data[measure]
         y = data["pct_change"]
@@ -212,6 +209,43 @@ def PlotIndeedPostingsAIExposure(source, target, env):
             ax.set_ylabel("Posting Index % Change")
         for spine in ["top", "right"]:
             ax.spines[spine].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsAvgAIExposure(source, target, env):
+    """
+    Scatterplot of Indeed posting index percent change vs average AI exposure.
+    """
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+    data = pd.merge(postings, exposure, on="sectorName")
+
+    measures = ["aioe", "anthropic", "tomlinson", "eisfeldt", "eloundou"]
+    data["average"] = data[measures].mean(axis=1)
+
+    fig, ax = plt.subplots(figsize=(5, 4))
+
+    x = data["average"]
+    y = data["pct_change"]
+
+    ax.scatter(x, y, color="#385CC3", alpha=0.7, s=30,
+               edgecolors="white", linewidths=0.5)
+
+    # Fit line
+    m, b = np.polyfit(x, y, 1)
+    x_line = np.linspace(x.min(), x.max(), 100)
+    ax.plot(x_line, m * x_line + b, color="#808080", lw=1, ls="--")
+
+    # Correlation
+    r = x.corr(y)
+    ax.set_title(f"Average  (r = {r:.2f})")
+    ax.set_xlabel("Average AI Exposure")
+    ax.set_ylabel("Posting Index % Change")
+    for spine in ["top", "right"]:
+        ax.spines[spine].set_visible(False)
 
     plt.tight_layout()
     plt.savefig(str(target[0]))
