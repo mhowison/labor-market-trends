@@ -1,29 +1,35 @@
-                            OLS Regression Results                            
-==============================================================================
-Dep. Variable:                  value   R-squared:                       0.516
-Model:                            OLS   Adj. R-squared:                  0.516
-Method:                 Least Squares   F-statistic:                     9816.
-Date:                Thu, 26 Mar 2026   Prob (F-statistic):               0.00
-Time:                        09:08:48   Log-Likelihood:            -2.1000e+05
-No. Observations:               46032   AIC:                         4.200e+05
-Df Residuals:                   46026   BIC:                         4.201e+05
-Df Model:                           5                                         
-Covariance Type:            nonrobust                                         
-======================================================================================
-                         coef    std err          t      P>|t|      [0.025      0.975]
---------------------------------------------------------------------------------------
-const                166.7112      0.187    890.580      0.000     166.344     167.078
-post_chatgpt_year1   -28.7582      0.265   -108.631      0.000     -29.277     -28.239
-post_chatgpt_year2   -48.4350      0.265   -183.083      0.000     -48.954     -47.916
-ai_exposure            5.1996      0.187     27.776      0.000       4.833       5.567
-year1_x_exposure     -18.8123      0.265    -71.061      0.000     -19.331     -18.293
-year2_x_exposure     -24.7250      0.277    -89.177      0.000     -25.268     -24.182
-==============================================================================
-Omnibus:                     1430.613   Durbin-Watson:                   1.633
-Prob(Omnibus):                  0.000   Jarque-Bera (JB):             1568.351
-Skew:                           0.452   Prob(JB):                         0.00
-Kurtosis:                       3.014   Cond. No.                         3.77
-==============================================================================
+                          PanelOLS Estimation Summary                           
+================================================================================
+Dep. Variable:                  value   R-squared:                        0.5805
+Estimator:                   PanelOLS   R-squared (Between):             -0.1922
+No. Observations:               30660   R-squared (Within):               0.5496
+Date:                Fri, Mar 27 2026   R-squared (Overall):             -0.1764
+Time:                        13:31:19   Log-likelihood                -1.257e+05
+Cov. Estimator:             Clustered                                           
+                                        F-statistic:                    1.41e+04
+Entities:                          42   P-value                           0.0000
+Avg Obs:                       730.00   Distribution:                 F(3,30564)
+Min Obs:                       730.00                                           
+Max Obs:                       730.00   F-statistic (robust):             25.092
+                                        P-value                           0.0000
+Time periods:                      52   Distribution:                 F(3,30564)
+Avg Obs:                       589.62                                           
+Min Obs:                       588.00                                           
+Max Obs:                       672.00                                           
+                                                                                
+                                     Parameter Estimates                                      
+==============================================================================================
+                            Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
+----------------------------------------------------------------------------------------------
+post_chatgpt                  -29.562     3.4781    -8.4996     0.0000     -36.380     -22.745
+ai_exposure                   -5.2932     6.9201    -0.7649     0.4443     -18.857      8.2705
+post_chatgpt_x_ai_exposure    -18.268     4.4477    -4.1072     0.0000     -26.985     -9.5501
+==============================================================================================
 
-Notes:
-[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+F-test for Poolability: 432.08
+P-value: 0.0000
+Distribution: F(92,30564)
+
+Included effects: Entity, Time
+
+Partial R² (vs base TWFE): 0.2658

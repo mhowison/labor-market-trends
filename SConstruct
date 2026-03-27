@@ -1,8 +1,24 @@
 import os
 from pathlib import Path
-from pipeline.data import DataStock, DataFred, DataIndeed, DataIndeedPostingIndex, DataMerge, DataAIExposure
-from pipeline.model import ModelIndeedPostingsAIExposureOLS, ModelPreCovidOLS
-from pipeline.plot import PlotTrends, PlotAIExposure, PlotIndeedPostingsAIExposure, PlotIndeedPostingsAvgAIExposure
+from pipeline.data import (
+    DataStock,
+    DataFred,
+    DataIndeed,
+    DataIndeedPostingIndex,
+    DataAIExposure,
+    DataMerge, 
+)
+from pipeline.model import (
+    ModelPreCovidOLS,
+    ModelIndeedPostingsTWFE,
+    ModelIndeedPostingsAIExposureTWFE,
+)
+from pipeline.plot import(
+    PlotTrends,
+    PlotAIExposure,
+    PlotIndeedPostingsAIExposure,
+    PlotIndeedPostingsAvgAIExposure,
+)
 
 env = Environment(env=os.environ)
 
@@ -92,8 +108,19 @@ for x, y in comparisons:
 
 env.Command(
     source=[input_dir / "indeed-job-postings-sector-index.csv"],
-    target=[output_dir / "indeed_posting_index_pre_post_chatgpt.csv"],
+    target=[output_dir / "indeed_postings.csv"],
     action=DataIndeedPostingIndex
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_model.txt",
+        scratch_dir / "indeed_postings_model.csv",
+    ],
+    action=ModelIndeedPostingsTWFE
 )
 
 env.Command(
@@ -105,7 +132,7 @@ env.Command(
         output_dir / "indeed_postings_ai_exposure_model.txt",
         scratch_dir / "indeed_postings_ai_exposure_model.csv",
     ],
-    action=ModelIndeedPostingsAIExposureOLS
+    action=ModelIndeedPostingsAIExposureTWFE
 )
 
 env.Command(
@@ -134,7 +161,7 @@ env.Command(
 
 env.Command(
     source=[
-        output_dir / "indeed_posting_index_pre_post_chatgpt.csv",
+        output_dir / "indeed_postings.csv",
         output_dir / "indeed_sector_ai_exposure.csv",
     ],
     target=[
@@ -146,7 +173,7 @@ env.Command(
 
 env.Command(
     source=[
-        output_dir / "indeed_posting_index_pre_post_chatgpt.csv",
+        output_dir / "indeed_postings.csv",
         output_dir / "indeed_sector_ai_exposure.csv",
     ],
     target=[

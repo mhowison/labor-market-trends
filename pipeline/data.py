@@ -175,7 +175,8 @@ def DataAIExposure(source, target, env):
 
     result = merged.groupby("sectorName", group_keys=False).apply(
         lambda g: pd.Series({
-            new: weighted_avg(g, old) for old, new in columns.items()
+            **{new: weighted_avg(g, old) for old, new in columns.items()},
+            "weight": g["TOT_EMP"].sum(),
         }),
         include_groups=False,
     ).reset_index()

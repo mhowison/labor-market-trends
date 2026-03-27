@@ -19,7 +19,7 @@ OCC_CODE,OCC_TITLE,sectorName
 11-3131,Training and Development Managers,Human Resources
 11-9013,"Farmers, Ranchers, and Other Agricultural Managers",Management
 11-9021,Construction Managers,Project Management
-11-9031,"Education and Childcare Administrators, Preschool and Daycare",Education & Instruction
+11-9031,"Education and Childcare Administrators, Preschool and Daycare",Childcare
 11-9032,"Education Administrators, Kindergarten through Secondary",Education & Instruction
 11-9033,"Education Administrators, Postsecondary",Education & Instruction
 11-9039,"Education Administrators, All Other",Education & Instruction
@@ -236,14 +236,14 @@ OCC_CODE,OCC_TITLE,sectorName
 25-1193,"Recreation and Fitness Studies Teachers, Postsecondary",Education & Instruction
 25-1194,"Career/Technical Education Teachers, Postsecondary",Education & Instruction
 25-1199,"Postsecondary Teachers, All Other",Education & Instruction
-25-2011,"Preschool Teachers, Except Special Education",Education & Instruction
+25-2011,"Preschool Teachers, Except Special Education",Childcare
 25-2012,"Kindergarten Teachers, Except Special Education",Education & Instruction
 25-2021,"Elementary School Teachers, Except Special Education",Education & Instruction
 25-2022,"Middle School Teachers, Except Special and Career/Technical Education",Education & Instruction
 25-2023,"Career/Technical Education Teachers, Middle School",Education & Instruction
 25-2031,"Secondary School Teachers, Except Special and Career/Technical Education",Education & Instruction
 25-2032,"Career/Technical Education Teachers, Secondary School",Education & Instruction
-25-2051,"Special Education Teachers, Preschool",Education & Instruction
+25-2051,"Special Education Teachers, Preschool",Childcare
 25-2052,"Special Education Teachers, Kindergarten and Elementary School",Education & Instruction
 25-2057,"Special Education Teachers, Middle School",Education & Instruction
 25-2058,"Special Education Teachers, Secondary School",Education & Instruction
@@ -470,7 +470,7 @@ OCC_CODE,OCC_TITLE,sectorName
 39-6011,Baggage Porters and Bellhops,Hospitality & Tourism
 39-6012,Concierges,Hospitality & Tourism
 39-7010,Tour and Travel Guides,Hospitality & Tourism
-39-9011,Childcare Workers,Personal Care & Home Health
+39-9011,Childcare Workers,Childcare
 39-9031,Exercise Trainers and Group Fitness Instructors,Sports
 39-9032,Recreation Workers,Hospitality & Tourism
 39-9041,Residential Advisors,Community & Social Service
@@ -787,15 +787,15 @@ OCC_CODE,OCC_TITLE,sectorName
 53-2021,Air Traffic Controllers,Logistic Support
 53-2022,Airfield Operations Specialists,Logistic Support
 53-2031,Flight Attendants,Hospitality & Tourism
-53-3011,"Ambulance Drivers and Attendants, Except Emergency Medical Technicians",Driving
-53-3031,Driver/Sales Workers,Driving
-53-3032,Heavy and Tractor-Trailer Truck Drivers,Driving
-53-3033,Light Truck Drivers,Driving
-53-3051,"Bus Drivers, School",Driving
-53-3052,"Bus Drivers, Transit and Intercity",Driving
-53-3053,Shuttle Drivers and Chauffeurs,Driving
-53-3054,Taxi Drivers,Driving
-53-3099,"Motor Vehicle Operators, All Other",Driving
+53-3011,"Ambulance Drivers and Attendants, Except Emergency Medical Technicians",Logistic Support
+53-3031,Driver/Sales Workers,Logistic Support
+53-3032,Heavy and Tractor-Trailer Truck Drivers,Logistic Support
+53-3033,Light Truck Drivers,Logistic Support
+53-3051,"Bus Drivers, School",Logistic Support
+53-3052,"Bus Drivers, Transit and Intercity",Logistic Support
+53-3053,Shuttle Drivers and Chauffeurs,Logistic Support
+53-3054,Taxi Drivers,Logistic Support
+53-3099,"Motor Vehicle Operators, All Other",Logistic Support
 53-4011,Locomotive Engineers,Logistic Support
 53-4013,"Rail Yard Engineers, Dinkey Operators, and Hostlers",Logistic Support
 53-4022,"Railroad Brake, Signal, and Switch Operators and Locomotive Firers",Logistic Support

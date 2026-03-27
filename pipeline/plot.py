@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from pandas import DateOffset
 from .data import DATES, load_data
+from .util import weighted_correlation
 
 from matplotlib import rcParams
 rcParams["font.sans-serif"] = "Arial"
@@ -236,18 +237,33 @@ def PlotIndeedPostingsAvgAIExposure(source, target, env):
 
     x = data["average"]
     y = data["pct_change"]
+    w = data["weight"]
 
-    ax.scatter(x, y, color="none", s=20, edgecolors="black", linewidths=0.75)
+    # Scale weights to reasonable circle sizes
+    s = w / w.max() * 200
+
+    ax.scatter(x, y, color="none", s=s, edgecolors="black", linewidths=0.75)
 
     # Fit line
     m, b = np.polyfit(x, y, 1)
     x_line = np.linspace(x.min(), x.max(), 100)
-    ax.plot(x_line, m * x_line + b, color="#808080", lw=1, ls="--")
+    ax.plot(x_line, m * x_line + b, color="black", lw=1, ls="--")
 
     # Correlation
     r = x.corr(y)
     ax.text(0.95, 0.95, f"R\u00B2 = {r:.2f}", transform=ax.transAxes,
             ha="right", va="top", fontsize=11)
+
+    # Fit line (weighted)
+    m, b = np.polyfit(x, y, 1, w=w)
+    x_line = np.linspace(x.min(), x.max(), 100)
+    ax.plot(x_line, m * x_line + b, color="gray", lw=1, ls="--")
+
+    # Weighted correlation
+    r = weighted_correlation(x, y, w)
+    ax.text(0.95, 0.90, f"Weighted R\u00B2 = {r:.2f}", transform=ax.transAxes,
+            ha="right", va="top", fontsize=11, color="gray")
+
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0f}%"))
     ax.set_xlabel("Average Normalized AI Exposure")
     ax.set_ylabel("% Change in Pre/Post ChatGPT Posting Index")

@@ -54,7 +54,7 @@ specific = {
     "11-3111": "Human Resources",     # Compensation and Benefits Managers
     "11-3121": "Human Resources",     # Human Resources Managers
     "11-3131": "Human Resources",     # Training and Development Managers
-    "11-9031": "Education & Instruction",  # Education and Childcare Administrators
+    "11-9031": "Childcare",                # Education and Childcare Administrators, Preschool and Daycare
     "11-9032": "Education & Instruction",  # Education Administrators, K-12
     "11-9033": "Education & Instruction",  # Education Administrators, Postsecondary
     "11-9039": "Education & Instruction",  # Education Administrators, All Other
@@ -157,6 +157,10 @@ specific = {
     "19-5011": "Security & Public Safety", # Occupational Health and Safety Specialists
     "19-5012": "Security & Public Safety", # Occupational Health and Safety Technicians
 
+    # Education (25) overrides
+    "25-2011": "Childcare",               # Preschool Teachers, Except Special Education
+    "25-2051": "Childcare",               # Special Education Teachers, Preschool
+
     # Community and Social Service (21) overrides
     "21-1012": "Education & Instruction",  # Educational Counselors and Advisors
     "21-1013": "Therapy",                  # Marriage and Family Therapists
@@ -246,7 +250,7 @@ specific = {
     "39-6011": "Hospitality & Tourism",    # Baggage Porters
     "39-6012": "Hospitality & Tourism",    # Concierges
     "39-7010": "Hospitality & Tourism",    # Tour and Travel Guides
-    "39-9011": "Personal Care & Home Health",  # Childcare Workers
+    "39-9011": "Childcare",                    # Childcare Workers
     "39-9031": "Sports",                   # Exercise Trainers
     "39-9032": "Hospitality & Tourism",    # Recreation Workers
     "39-9041": "Community & Social Service",   # Residential Advisors
@@ -302,15 +306,15 @@ specific = {
 
     # Transportation and Material Moving (53) overrides
     "53-2031": "Hospitality & Tourism",  # Flight Attendants
-    "53-3031": "Driving",               # Driver/Sales Workers
-    "53-3032": "Driving",               # Heavy Truck Drivers
-    "53-3033": "Driving",               # Light Truck Drivers
-    "53-3051": "Driving",               # Bus Drivers, School
-    "53-3052": "Driving",               # Bus Drivers, Transit
-    "53-3053": "Driving",               # Shuttle Drivers
-    "53-3054": "Driving",               # Taxi Drivers
-    "53-3099": "Driving",               # Motor Vehicle Operators, All Other
-    "53-3011": "Driving",               # Ambulance Drivers
+    "53-3011": "Logistic Support",       # Ambulance Drivers
+    "53-3031": "Logistic Support",       # Driver/Sales Workers
+    "53-3032": "Logistic Support",       # Heavy Truck Drivers
+    "53-3033": "Logistic Support",       # Light Truck Drivers
+    "53-3051": "Logistic Support",       # Bus Drivers, School
+    "53-3052": "Logistic Support",       # Bus Drivers, Transit
+    "53-3053": "Logistic Support",       # Shuttle Drivers
+    "53-3054": "Logistic Support",       # Taxi Drivers
+    "53-3099": "Logistic Support",       # Motor Vehicle Operators, All Other
     "53-7051": "Loading & Stocking",    # Industrial Truck Operators
     "53-7061": "Cleaning & Sanitation", # Cleaners of Vehicles and Equipment
     "53-7062": "Loading & Stocking",    # Laborers, Freight, Stock Movers
