@@ -4,7 +4,7 @@ Build a crosswalk mapping SOC codes from OEWS to Indeed sectorName values.
 Claude Code explanation of the mapping:
 
 >  The mapping is complete. Created input/indeed-sector-soc-mapping.csv with 831 detailed SOC
->  occupation codes mapped to all 41 Indeed sector names. The mapping uses:
+>  occupation codes mapped to all 40 Indeed sector names. The mapping uses:
 >
 >  - Specific overrides for ~300 codes where the occupation clearly belongs to a particular sector
 >  (e.g., Software Developers → Software Development, Registered Nurses → Nursing)
@@ -69,8 +69,6 @@ specific = {
     "11-9141": "Sales",               # Property, Real Estate Managers
     "11-9151": "Community & Social Service",  # Social and Community Service Managers
     "11-9161": "Security & Public Safety",    # Emergency Management Directors
-    "11-9171": "Personal Care & Home Health", # Funeral Home Managers
-    "11-9179": "Personal Care & Home Health", # Personal Service Managers
 
     # Business and Financial Operations (13) overrides
     "13-1011": "Arts & Entertainment",   # Agents of Artists, Performers, Athletes
@@ -141,19 +139,33 @@ specific = {
     "17-2072": "Electrical Engineering",   # Electronics Engineers
     "17-2081": "Civil Engineering",        # Environmental Engineers
     "17-2112": "Industrial Engineering",   # Industrial Engineers
+    "17-2141": "Mechanical Engineering",   # Mechanical Engineers
     "17-3011": "Architecture",             # Architectural and Civil Drafters
     "17-3012": "Electrical Engineering",   # Electrical and Electronics Drafters
+    "17-3013": "Mechanical Engineering",   # Mechanical Drafters
     "17-3019": "Architecture",             # Drafters, All Other
     "17-3022": "Civil Engineering",        # Civil Engineering Technicians
     "17-3023": "Electrical Engineering",   # Electrical/Electronic Eng Technicians
     "17-3024": "Electrical Engineering",   # Electro-Mechanical Technicians
     "17-3025": "Civil Engineering",        # Environmental Engineering Technicians
     "17-3026": "Industrial Engineering",   # Industrial Engineering Technicians
+    "17-3027": "Mechanical Engineering",   # Mechanical Engineering Technologists and Technicians
     "17-3031": "Architecture",             # Surveying and Mapping Technicians
 
     # Life, Physical, and Social Science (19) overrides
-    "19-3033": "Therapy",                  # Clinical and Counseling Psychologists
+    "19-3011": "Social Science",           # Economists
+    "19-3022": "Social Science",           # Survey Researchers
+    "19-3032": "Social Science",           # Industrial-Organizational Psychologists
+    "19-3033": "Physicians & Surgeons",    # Clinical and Counseling Psychologists
     "19-3034": "Education & Instruction",  # School Psychologists
+    "19-3039": "Social Science",           # Psychologists, All Other
+    "19-3041": "Social Science",           # Sociologists
+    "19-3051": "Social Science",           # Urban and Regional Planners
+    "19-3091": "Social Science",           # Anthropologists and Archeologists
+    "19-3092": "Social Science",           # Geographers
+    "19-3093": "Social Science",           # Historians
+    "19-3094": "Social Science",           # Political Scientists
+    "19-3099": "Social Science",           # Social Scientists and Related Workers, All Other
     "19-5011": "Security & Public Safety", # Occupational Health and Safety Specialists
     "19-5012": "Security & Public Safety", # Occupational Health and Safety Technicians
 
@@ -163,71 +175,58 @@ specific = {
 
     # Community and Social Service (21) overrides
     "21-1012": "Education & Instruction",  # Educational Counselors and Advisors
-    "21-1013": "Therapy",                  # Marriage and Family Therapists
-    "21-1015": "Therapy",                  # Rehabilitation Counselors
-    "21-1018": "Therapy",                  # Substance Abuse/Mental Health Counselors
     "21-1092": "Security & Public Safety", # Probation Officers
 
     # Healthcare Practitioners (29) overrides
-    "29-1011": "Therapy",                 # Chiropractors
-    "29-1021": "Dental",                  # Dentists, General
-    "29-1022": "Dental",                  # Oral and Maxillofacial Surgeons
-    "29-1023": "Dental",                  # Orthodontists
-    "29-1024": "Dental",                  # Prosthodontists
-    "29-1029": "Dental",                  # Dentists, All Other Specialists
-    "29-1031": "Therapy",                 # Dietitians and Nutritionists
+    "29-1011": "Physicians & Surgeons",   # Chiropractors
+    "29-1021": "Physicians & Surgeons",   # Dentists, General
+    "29-1022": "Physicians & Surgeons",   # Oral and Maxillofacial Surgeons
+    "29-1023": "Physicians & Surgeons",   # Orthodontists
+    "29-1024": "Physicians & Surgeons",   # Prosthodontists
+    "29-1029": "Physicians & Surgeons",   # Dentists, All Other Specialists
+    "29-1031": "Physicians & Surgeons",   # Dietitians and Nutritionists
     "29-1041": "Physicians & Surgeons",   # Optometrists
-    "29-1051": "Pharmacy",               # Pharmacists
+    "29-1051": "Pharmacy",                # Pharmacists
     "29-1071": "Physicians & Surgeons",   # Physician Assistants
     "29-1081": "Physicians & Surgeons",   # Podiatrists
-    "29-1122": "Therapy",                # Occupational Therapists
-    "29-1123": "Therapy",                # Physical Therapists
-    "29-1124": "Therapy",                # Radiation Therapists
-    "29-1125": "Therapy",                # Recreational Therapists
-    "29-1126": "Therapy",                # Respiratory Therapists
-    "29-1127": "Therapy",                # Speech-Language Pathologists
-    "29-1128": "Therapy",                # Exercise Physiologists
-    "29-1129": "Therapy",                # Therapists, All Other
+    "29-1122": "Physicians & Surgeons",   # Occupational Therapists
+    "29-1123": "Physicians & Surgeons",   # Physical Therapists
+    "29-1124": "Physicians & Surgeons",   # Radiation Therapists
+    "29-1125": "Physicians & Surgeons",   # Recreational Therapists
+    "29-1126": "Physicians & Surgeons",   # Respiratory Therapists
+    "29-1127": "Physicians & Surgeons",   # Speech-Language Pathologists
+    "29-1128": "Physicians & Surgeons",   # Exercise Physiologists
+    "29-1129": "Physicians & Surgeons",   # Therapists, All Other
     "29-1131": "Physicians & Surgeons",   # Veterinarians
-    "29-1141": "Nursing",                # Registered Nurses
-    "29-1151": "Nursing",                # Nurse Anesthetists
-    "29-1161": "Nursing",                # Nurse Midwives
-    "29-1171": "Nursing",                # Nurse Practitioners
-    "29-1181": "Therapy",                # Audiologists
-    "29-1291": "Therapy",                # Acupuncturists
-    "29-1292": "Dental",                 # Dental Hygienists
-    "29-2052": "Pharmacy",              # Pharmacy Technicians
-    "29-2061": "Nursing",               # Licensed Practical/Vocational Nurses
-    "29-2072": "Medical Information",    # Medical Records Specialists
-    "29-9021": "Medical Information",    # Health Information Technologists
-    "29-9091": "Sports",                 # Athletic Trainers
-    "29-9092": "Medical Information",    # Genetic Counselors
+    "29-1141": "Nursing",                 # Registered Nurses
+    "29-1151": "Nursing",                 # Nurse Anesthetists
+    "29-1161": "Nursing",                 # Nurse Midwives
+    "29-1171": "Nursing",                 # Nurse Practitioners
+    "29-1181": "Physicians & Surgeons",   # Audiologists
+    "29-1291": "Physicians & Surgeons",   # Acupuncturists
+    "29-1292": "Medical Technician",      # Dental Hygienists (override 29-12 sub_prefix)
+    "29-2052": "Pharmacy",                # Pharmacy Technicians
+    "29-2061": "Nursing",                 # Licensed Practical/Vocational Nurses
+    "29-2072": "Medical Information",     # Medical Records Specialists
+    "29-9021": "Medical Information",     # Health Information Technologists
+    "29-9091": "Arts & Entertainment",    # Athletic Trainers
+    "29-9092": "Medical Information",     # Genetic Counselors
 
     # Healthcare Support (31) overrides
-    "31-1120": "Personal Care & Home Health",  # Home Health and Personal Care Aides
-    "31-1131": "Nursing",               # Nursing Assistants
-    "31-1132": "Nursing",               # Orderlies
-    "31-1133": "Nursing",               # Psychiatric Aides
-    "31-2011": "Therapy",               # Occupational Therapy Assistants
-    "31-2012": "Therapy",               # Occupational Therapy Aides
-    "31-2021": "Therapy",               # Physical Therapist Assistants
-    "31-2022": "Therapy",               # Physical Therapist Aides
-    "31-9011": "Therapy",               # Massage Therapists
-    "31-9091": "Dental",                # Dental Assistants
-    "31-9092": "Medical Technician",    # Medical Assistants
-    "31-9093": "Medical Technician",    # Medical Equipment Preparers
-    "31-9094": "Medical Information",   # Medical Transcriptionists
-    "31-9095": "Pharmacy",              # Pharmacy Aides
-    "31-9096": "Medical Technician",    # Veterinary Assistants
-    "31-9097": "Medical Technician",    # Phlebotomists
-    "31-9099": "Personal Care & Home Health",  # Healthcare Support Workers, All Other
+    "31-1120": "Nursing",                # Home Health and Personal Care Aides
+    "31-1131": "Nursing",                # Nursing Assistants
+    "31-1132": "Nursing",                # Orderlies
+    "31-1133": "Nursing",                # Psychiatric Aides
+    "31-9094": "Medical Information",    # Medical Transcriptionists
+    "31-9095": "Pharmacy",               # Pharmacy Aides
+    "31-9099": "Nursing",                # Healthcare Support Workers, All Other
 
     # Personal Care and Service (39) overrides
     "39-1013": "Hospitality & Tourism",    # Supervisors of Gambling Services
     "39-1014": "Arts & Entertainment",     # Supervisors of Entertainment/Recreation
-    "39-1022": "Personal Care & Home Health",
-    "39-2011": "Personal Care & Home Health",  # Animal Trainers
-    "39-2021": "Personal Care & Home Health",  # Animal Caretakers
+    "39-1022": "Customer Service",         # Supervisors of Personal Service Workers
+    "39-2011": "Community & Social Service",  # Animal Trainers
+    "39-2021": "Community & Social Service",  # Animal Caretakers
     "39-3011": "Hospitality & Tourism",    # Gambling Dealers
     "39-3012": "Hospitality & Tourism",    # Gambling and Sports Book Writers
     "39-3019": "Hospitality & Tourism",    # Gambling Service Workers
@@ -237,24 +236,23 @@ specific = {
     "39-3092": "Arts & Entertainment",     # Costume Attendants
     "39-3093": "Hospitality & Tourism",    # Locker Room Attendants
     "39-3099": "Arts & Entertainment",     # Entertainment Attendants, All Other
-    "39-4011": "Personal Care & Home Health",  # Embalmers
-    "39-4012": "Personal Care & Home Health",  # Crematory Operators
-    "39-4021": "Personal Care & Home Health",  # Funeral Attendants
-    "39-4031": "Personal Care & Home Health",  # Morticians
-    "39-5011": "Personal Care & Home Health",  # Barbers
-    "39-5012": "Personal Care & Home Health",  # Hairdressers
-    "39-5091": "Personal Care & Home Health",  # Makeup Artists
-    "39-5092": "Personal Care & Home Health",  # Manicurists
-    "39-5093": "Personal Care & Home Health",  # Shampooers
-    "39-5094": "Personal Care & Home Health",  # Skincare Specialists
+    "39-4011": "Customer Service",         # Embalmers
+    "39-4012": "Customer Service",         # Crematory Operators
+    "39-4021": "Customer Service",         # Funeral Attendants
+    "39-4031": "Customer Service",         # Morticians
+    "39-5011": "Customer Service",         # Barbers
+    "39-5012": "Customer Service",         # Hairdressers
+    "39-5091": "Arts & Entertainment",     # Makeup Artists
+    "39-5092": "Customer Service",         # Manicurists
+    "39-5093": "Customer Service",         # Shampooers
+    "39-5094": "Customer Service",         # Skincare Specialists
     "39-6011": "Hospitality & Tourism",    # Baggage Porters
     "39-6012": "Hospitality & Tourism",    # Concierges
     "39-7010": "Hospitality & Tourism",    # Tour and Travel Guides
-    "39-9011": "Childcare",                    # Childcare Workers
-    "39-9031": "Sports",                   # Exercise Trainers
+    "39-9011": "Childcare",                # Childcare Workers
+    "39-9031": "Arts & Entertainment",     # Exercise Trainers
     "39-9032": "Hospitality & Tourism",    # Recreation Workers
     "39-9041": "Community & Social Service",   # Residential Advisors
-    "39-9099": "Personal Care & Home Health",  # Personal Care Workers, All Other
 
     # Sales (41) overrides
     "41-1011": "Retail",               # Supervisors of Retail Sales
@@ -342,7 +340,7 @@ prefix_defaults = {
     "33": "Security & Public Safety",
     "35": "Food Preparation & Service",
     "37": "Cleaning & Sanitation",
-    "39": "Personal Care & Home Health",
+    "39": "Customer Service",            # personal service default
     "41": "Sales",
     "43": "Administrative Assistance",
     "45": "Production & Manufacturing",  # farming - no direct match
@@ -356,8 +354,7 @@ prefix_defaults = {
 sub_prefix = {
     "27-3": "Media & Communications",   # Media and Communication Workers
     "27-4": "Media & Communications",   # Media and Communication Equipment Workers
-    "29-12": "Physicians & Surgeons",    # All physicians and surgeons
-    "27-202": "Sports",                  # Athletes, Coaches, Umpires
+    "29-12": "Physicians & Surgeons",   # All physicians and surgeons
 }
 
 def get_sector(occ_code):

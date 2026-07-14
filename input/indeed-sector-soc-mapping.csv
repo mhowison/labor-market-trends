@@ -34,8 +34,8 @@ OCC_CODE,OCC_TITLE,sectorName
 11-9141,"Property, Real Estate, and Community Association Managers",Sales
 11-9151,Social and Community Service Managers,Community & Social Service
 11-9161,Emergency Management Directors,Security & Public Safety
-11-9171,Funeral Home Managers,Personal Care & Home Health
-11-9179,"Personal Service Managers, All Other",Personal Care & Home Health
+11-9171,Funeral Home Managers,Management
+11-9179,"Personal Service Managers, All Other",Management
 11-9199,"Managers, All Other",Management
 13-1011,"Agents and Business Managers of Artists, Performers, and Athletes",Arts & Entertainment
 13-1020,Buyers and Purchasing Agents,Management
@@ -107,14 +107,14 @@ OCC_CODE,OCC_TITLE,sectorName
 17-2112,Industrial Engineers,Industrial Engineering
 17-2121,Marine Engineers and Naval Architects,Industrial Engineering
 17-2131,Materials Engineers,Industrial Engineering
-17-2141,Mechanical Engineers,Industrial Engineering
+17-2141,Mechanical Engineers,Mechanical Engineering
 17-2151,"Mining and Geological Engineers, Including Mining Safety Engineers",Industrial Engineering
 17-2161,Nuclear Engineers,Industrial Engineering
 17-2171,Petroleum Engineers,Industrial Engineering
 17-2199,"Engineers, All Other",Industrial Engineering
 17-3011,Architectural and Civil Drafters,Architecture
 17-3012,Electrical and Electronics Drafters,Electrical Engineering
-17-3013,Mechanical Drafters,Industrial Engineering
+17-3013,Mechanical Drafters,Mechanical Engineering
 17-3019,"Drafters, All Other",Architecture
 17-3021,Aerospace Engineering and Operations Technologists and Technicians,Industrial Engineering
 17-3022,Civil Engineering Technologists and Technicians,Civil Engineering
@@ -122,7 +122,7 @@ OCC_CODE,OCC_TITLE,sectorName
 17-3024,Electro-Mechanical and Mechatronics Technologists and Technicians,Electrical Engineering
 17-3025,Environmental Engineering Technologists and Technicians,Civil Engineering
 17-3026,Industrial Engineering Technologists and Technicians,Industrial Engineering
-17-3027,Mechanical Engineering Technologists and Technicians,Industrial Engineering
+17-3027,Mechanical Engineering Technologists and Technicians,Mechanical Engineering
 17-3028,Calibration Technologists and Technicians,Industrial Engineering
 17-3029,"Engineering Technologists and Technicians, Except Drafters, All Other",Industrial Engineering
 17-3031,Surveying and Mapping Technicians,Architecture
@@ -147,19 +147,19 @@ OCC_CODE,OCC_TITLE,sectorName
 19-2042,"Geoscientists, Except Hydrologists and Geographers",Scientific Research & Development
 19-2043,Hydrologists,Scientific Research & Development
 19-2099,"Physical Scientists, All Other",Scientific Research & Development
-19-3011,Economists,Scientific Research & Development
-19-3022,Survey Researchers,Scientific Research & Development
-19-3032,Industrial-Organizational Psychologists,Scientific Research & Development
-19-3033,Clinical and Counseling Psychologists,Therapy
+19-3011,Economists,Social Science
+19-3022,Survey Researchers,Social Science
+19-3032,Industrial-Organizational Psychologists,Social Science
+19-3033,Clinical and Counseling Psychologists,Physicians & Surgeons
 19-3034,School Psychologists,Education & Instruction
-19-3039,"Psychologists, All Other",Scientific Research & Development
-19-3041,Sociologists,Scientific Research & Development
-19-3051,Urban and Regional Planners,Scientific Research & Development
-19-3091,Anthropologists and Archeologists,Scientific Research & Development
-19-3092,Geographers,Scientific Research & Development
-19-3093,Historians,Scientific Research & Development
-19-3094,Political Scientists,Scientific Research & Development
-19-3099,"Social Scientists and Related Workers, All Other",Scientific Research & Development
+19-3039,"Psychologists, All Other",Social Science
+19-3041,Sociologists,Social Science
+19-3051,Urban and Regional Planners,Social Science
+19-3091,Anthropologists and Archeologists,Social Science
+19-3092,Geographers,Social Science
+19-3093,Historians,Social Science
+19-3094,Political Scientists,Social Science
+19-3099,"Social Scientists and Related Workers, All Other",Social Science
 19-4012,Agricultural Technicians,Scientific Research & Development
 19-4013,Food Science Technicians,Scientific Research & Development
 19-4021,Biological Technicians,Scientific Research & Development
@@ -175,9 +175,9 @@ OCC_CODE,OCC_TITLE,sectorName
 19-5011,Occupational Health and Safety Specialists,Security & Public Safety
 19-5012,Occupational Health and Safety Technicians,Security & Public Safety
 21-1012,"Educational, Guidance, and Career Counselors and Advisors",Education & Instruction
-21-1013,Marriage and Family Therapists,Therapy
-21-1015,Rehabilitation Counselors,Therapy
-21-1018,"Substance Abuse, Behavioral Disorder, and Mental Health Counselors",Therapy
+21-1013,Marriage and Family Therapists,Community & Social Service
+21-1015,Rehabilitation Counselors,Community & Social Service
+21-1018,"Substance Abuse, Behavioral Disorder, and Mental Health Counselors",Community & Social Service
 21-1019,"Counselors, All Other",Community & Social Service
 21-1021,"Child, Family, and School Social Workers",Community & Social Service
 21-1022,Healthcare Social Workers,Community & Social Service
@@ -304,31 +304,31 @@ OCC_CODE,OCC_TITLE,sectorName
 27-4031,"Camera Operators, Television, Video, and Film",Media & Communications
 27-4032,Film and Video Editors,Media & Communications
 27-4099,"Media and Communication Equipment Workers, All Other",Media & Communications
-29-1011,Chiropractors,Therapy
-29-1021,"Dentists, General",Dental
-29-1022,Oral and Maxillofacial Surgeons,Dental
-29-1023,Orthodontists,Dental
-29-1024,Prosthodontists,Dental
-29-1029,"Dentists, All Other Specialists",Dental
-29-1031,Dietitians and Nutritionists,Therapy
+29-1011,Chiropractors,Physicians & Surgeons
+29-1021,"Dentists, General",Physicians & Surgeons
+29-1022,Oral and Maxillofacial Surgeons,Physicians & Surgeons
+29-1023,Orthodontists,Physicians & Surgeons
+29-1024,Prosthodontists,Physicians & Surgeons
+29-1029,"Dentists, All Other Specialists",Physicians & Surgeons
+29-1031,Dietitians and Nutritionists,Physicians & Surgeons
 29-1041,Optometrists,Physicians & Surgeons
 29-1051,Pharmacists,Pharmacy
 29-1071,Physician Assistants,Physicians & Surgeons
 29-1081,Podiatrists,Physicians & Surgeons
-29-1122,Occupational Therapists,Therapy
-29-1123,Physical Therapists,Therapy
-29-1124,Radiation Therapists,Therapy
-29-1125,Recreational Therapists,Therapy
-29-1126,Respiratory Therapists,Therapy
-29-1127,Speech-Language Pathologists,Therapy
-29-1128,Exercise Physiologists,Therapy
-29-1129,"Therapists, All Other",Therapy
+29-1122,Occupational Therapists,Physicians & Surgeons
+29-1123,Physical Therapists,Physicians & Surgeons
+29-1124,Radiation Therapists,Physicians & Surgeons
+29-1125,Recreational Therapists,Physicians & Surgeons
+29-1126,Respiratory Therapists,Physicians & Surgeons
+29-1127,Speech-Language Pathologists,Physicians & Surgeons
+29-1128,Exercise Physiologists,Physicians & Surgeons
+29-1129,"Therapists, All Other",Physicians & Surgeons
 29-1131,Veterinarians,Physicians & Surgeons
 29-1141,Registered Nurses,Nursing
 29-1151,Nurse Anesthetists,Nursing
 29-1161,Nurse Midwives,Nursing
 29-1171,Nurse Practitioners,Nursing
-29-1181,Audiologists,Therapy
+29-1181,Audiologists,Physicians & Surgeons
 29-1211,Anesthesiologists,Physicians & Surgeons
 29-1212,Cardiologists,Physicians & Surgeons
 29-1213,Dermatologists,Physicians & Surgeons
@@ -346,8 +346,8 @@ OCC_CODE,OCC_TITLE,sectorName
 29-1242,"Orthopedic Surgeons, Except Pediatric",Physicians & Surgeons
 29-1243,Pediatric Surgeons,Physicians & Surgeons
 29-1249,"Surgeons, All Other",Physicians & Surgeons
-29-1291,Acupuncturists,Therapy
-29-1292,Dental Hygienists,Dental
+29-1291,Acupuncturists,Physicians & Surgeons
+29-1292,Dental Hygienists,Medical Technician
 29-1299,"Healthcare Diagnosing or Treating Practitioners, All Other",Physicians & Surgeons
 29-2010,Clinical Laboratory Technologists and Technicians,Medical Technician
 29-2031,Cardiovascular Technologists and Technicians,Medical Technician
@@ -371,27 +371,27 @@ OCC_CODE,OCC_TITLE,sectorName
 29-2092,Hearing Aid Specialists,Medical Technician
 29-2099,"Health Technologists and Technicians, All Other",Medical Technician
 29-9021,Health Information Technologists and Medical Registrars,Medical Information
-29-9091,Athletic Trainers,Sports
+29-9091,Athletic Trainers,Arts & Entertainment
 29-9092,Genetic Counselors,Medical Information
 29-9093,Surgical Assistants,Medical Technician
 29-9099,"Healthcare Practitioners and Technical Workers, All Other",Medical Technician
-31-1120,Home Health and Personal Care Aides,Personal Care & Home Health
+31-1120,Home Health and Personal Care Aides,Nursing
 31-1131,Nursing Assistants,Nursing
 31-1132,Orderlies,Nursing
 31-1133,Psychiatric Aides,Nursing
-31-2011,Occupational Therapy Assistants,Therapy
-31-2012,Occupational Therapy Aides,Therapy
-31-2021,Physical Therapist Assistants,Therapy
-31-2022,Physical Therapist Aides,Therapy
-31-9011,Massage Therapists,Therapy
-31-9091,Dental Assistants,Dental
+31-2011,Occupational Therapy Assistants,Medical Technician
+31-2012,Occupational Therapy Aides,Medical Technician
+31-2021,Physical Therapist Assistants,Medical Technician
+31-2022,Physical Therapist Aides,Medical Technician
+31-9011,Massage Therapists,Medical Technician
+31-9091,Dental Assistants,Medical Technician
 31-9092,Medical Assistants,Medical Technician
 31-9093,Medical Equipment Preparers,Medical Technician
 31-9094,Medical Transcriptionists,Medical Information
 31-9095,Pharmacy Aides,Pharmacy
 31-9096,Veterinary Assistants and Laboratory Animal Caretakers,Medical Technician
 31-9097,Phlebotomists,Medical Technician
-31-9099,"Healthcare Support Workers, All Other",Personal Care & Home Health
+31-9099,"Healthcare Support Workers, All Other",Nursing
 33-1011,First-Line Supervisors of Correctional Officers,Security & Public Safety
 33-1012,First-Line Supervisors of Police and Detectives,Security & Public Safety
 33-1021,First-Line Supervisors of Firefighting and Prevention Workers,Security & Public Safety
@@ -445,9 +445,9 @@ OCC_CODE,OCC_TITLE,sectorName
 37-3019,"Grounds Maintenance Workers, All Other",Cleaning & Sanitation
 39-1013,First-Line Supervisors of Gambling Services Workers,Hospitality & Tourism
 39-1014,"First-Line Supervisors of Entertainment and Recreation Workers, Except Gambling Services",Arts & Entertainment
-39-1022,First-Line Supervisors of Personal Service Workers,Personal Care & Home Health
-39-2011,Animal Trainers,Personal Care & Home Health
-39-2021,Animal Caretakers,Personal Care & Home Health
+39-1022,First-Line Supervisors of Personal Service Workers,Customer Service
+39-2011,Animal Trainers,Community & Social Service
+39-2021,Animal Caretakers,Community & Social Service
 39-3011,Gambling Dealers,Hospitality & Tourism
 39-3012,Gambling and Sports Book Writers and Runners,Hospitality & Tourism
 39-3019,"Gambling Service Workers, All Other",Hospitality & Tourism
@@ -457,24 +457,24 @@ OCC_CODE,OCC_TITLE,sectorName
 39-3092,Costume Attendants,Arts & Entertainment
 39-3093,"Locker Room, Coatroom, and Dressing Room Attendants",Hospitality & Tourism
 39-3099,"Entertainment Attendants and Related Workers, All Other",Arts & Entertainment
-39-4011,Embalmers,Personal Care & Home Health
-39-4012,Crematory Operators,Personal Care & Home Health
-39-4021,Funeral Attendants,Personal Care & Home Health
-39-4031,"Morticians, Undertakers, and Funeral Arrangers",Personal Care & Home Health
-39-5011,Barbers,Personal Care & Home Health
-39-5012,"Hairdressers, Hairstylists, and Cosmetologists",Personal Care & Home Health
-39-5091,"Makeup Artists, Theatrical and Performance",Personal Care & Home Health
-39-5092,Manicurists and Pedicurists,Personal Care & Home Health
-39-5093,Shampooers,Personal Care & Home Health
-39-5094,Skincare Specialists,Personal Care & Home Health
+39-4011,Embalmers,Customer Service
+39-4012,Crematory Operators,Customer Service
+39-4021,Funeral Attendants,Customer Service
+39-4031,"Morticians, Undertakers, and Funeral Arrangers",Customer Service
+39-5011,Barbers,Customer Service
+39-5012,"Hairdressers, Hairstylists, and Cosmetologists",Customer Service
+39-5091,"Makeup Artists, Theatrical and Performance",Arts & Entertainment
+39-5092,Manicurists and Pedicurists,Customer Service
+39-5093,Shampooers,Customer Service
+39-5094,Skincare Specialists,Customer Service
 39-6011,Baggage Porters and Bellhops,Hospitality & Tourism
 39-6012,Concierges,Hospitality & Tourism
 39-7010,Tour and Travel Guides,Hospitality & Tourism
 39-9011,Childcare Workers,Childcare
-39-9031,Exercise Trainers and Group Fitness Instructors,Sports
+39-9031,Exercise Trainers and Group Fitness Instructors,Arts & Entertainment
 39-9032,Recreation Workers,Hospitality & Tourism
 39-9041,Residential Advisors,Community & Social Service
-39-9099,"Personal Care and Service Workers, All Other",Personal Care & Home Health
+39-9099,"Personal Care and Service Workers, All Other",Customer Service
 41-1011,First-Line Supervisors of Retail Sales Workers,Retail
 41-1012,First-Line Supervisors of Non-Retail Sales Workers,Sales
 41-2011,Cashiers,Retail
