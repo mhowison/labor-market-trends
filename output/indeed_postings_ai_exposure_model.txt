@@ -1,35 +1,35 @@
                           PanelOLS Estimation Summary                           
 ================================================================================
-Dep. Variable:                  value   R-squared:                        0.5805
-Estimator:                   PanelOLS   R-squared (Between):             -0.1922
-No. Observations:               30660   R-squared (Within):               0.5496
-Date:                Thu, Jul 02 2026   R-squared (Overall):             -0.1764
-Time:                        13:25:55   Log-likelihood                -1.257e+05
+Dep. Variable:                  value   R-squared:                        0.6084
+Estimator:                   PanelOLS   R-squared (Between):             -0.2168
+No. Observations:               29200   R-squared (Within):               0.5718
+Date:                Thu, Jul 16 2026   R-squared (Overall):             -0.1992
+Time:                        14:15:05   Log-likelihood                -1.192e+05
 Cov. Estimator:             Clustered                                           
-                                        F-statistic:                    1.41e+04
-Entities:                          42   P-value                           0.0000
-Avg Obs:                       730.00   Distribution:                 F(3,30564)
+                                        F-statistic:                   1.508e+04
+Entities:                          40   P-value                           0.0000
+Avg Obs:                       730.00   Distribution:                 F(3,29106)
 Min Obs:                       730.00                                           
-Max Obs:                       730.00   F-statistic (robust):             25.092
+Max Obs:                       730.00   F-statistic (robust):             29.574
                                         P-value                           0.0000
-Time periods:                      52   Distribution:                 F(3,30564)
-Avg Obs:                       589.62                                           
-Min Obs:                       588.00                                           
-Max Obs:                       672.00                                           
+Time periods:                      52   Distribution:                 F(3,29106)
+Avg Obs:                       561.54                                           
+Min Obs:                       560.00                                           
+Max Obs:                       640.00                                           
                                                                                 
                                      Parameter Estimates                                      
 ==============================================================================================
                             Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
 ----------------------------------------------------------------------------------------------
-post_chatgpt                  -29.562     3.4781    -8.4996     0.0000     -36.380     -22.745
-ai_exposure                   -5.2932     6.9201    -0.7649     0.4443     -18.857      8.2705
-post_chatgpt_x_ai_exposure    -18.268     4.4477    -4.1072     0.0000     -26.985     -9.5501
+post_chatgpt                  -32.367     3.5148    -9.2088     0.0000     -39.256     -25.478
+ai_exposure                   -10.566     6.6634    -1.5857     0.1128     -23.627      2.4943
+post_chatgpt_x_ai_exposure    -14.472     4.0129    -3.6063     0.0003     -22.337     -6.6062
 ==============================================================================================
 
-F-test for Poolability: 432.08
+F-test for Poolability: 512.50
 P-value: 0.0000
-Distribution: F(92,30564)
+Distribution: F(90,29106)
 
 Included effects: Entity, Time
 
-Partial R² (vs base TWFE): 0.2658
+Partial R² (vs base TWFE): 0.2352
