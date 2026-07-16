@@ -4,8 +4,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 from pandas import DateOffset
+from matplotlib.patches import Patch
 from .data import DATES, load_data
 from .util import weighted_correlation
+
 
 from matplotlib import rcParams
 rcParams["font.sans-serif"] = "Arial"
@@ -215,6 +217,221 @@ def PlotIndeedPostingsAIExposure(source, target, env):
         for spine in ["top", "right"]:
             ax.spines[spine].set_visible(False)
 
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsEventStudy(source, target, env):
+    """
+    Event-study coefficient plot: monthly betas with 95% cluster CIs,
+    ChatGPT and Claude Code launch dates marked.
+    """
+    ev = pd.read_csv(str(source[0]))
+    ev["t"] = pd.PeriodIndex(ev["month"], freq="M").to_timestamp()
+
+    chatgpt = pd.Timestamp(DATES["ChatGPT"])
+    claude_code = pd.Timestamp(DATES["ClaudeCode"])
+
+    fig, ax = plt.subplots(figsize=(10, 5.5))
+    ax.axhline(0, color="gray", lw=0.5)
+    ax.axvline(chatgpt, color="k", ls="--", lw=1)
+    ax.axvline(claude_code, color="k", ls="--", lw=1)
+    ax.errorbar(
+        ev["t"], ev["beta"], yerr=1.96 * ev["se"], fmt="o", ms=3.5,
+        lw=1, color="#CC3311", ecolor="#CC331155",
+    )
+    ax.text(
+        chatgpt + pd.Timedelta(days=15), 0.085,
+        "ChatGPT\n(Nov 2022)", fontsize=9,
+    )
+    ax.text(
+        claude_code + pd.Timedelta(days=15), 0.085,
+        "Claude Code\n(Feb 2025)", fontsize=9,
+    )
+    ax.set_title(
+        "Event study: log postings on AI exposure x month "
+        "(ref. Nov 2022), 95% cluster CI"
+    )
+    ax.set_ylabel("Coef. per 1 SD exposure")
+    ax.set_ylim(-0.15, 0.115)
+    for spine in ["top", "right"]:
+        ax.spines[spine].set_visible(False)
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsEventStudyRemote(source, target, env):
+    """
+    Two-panel figure: (top) split-sample event studies for on-site and remote
+    log postings with 95% cluster CI ribbons; (bottom) triple-diff coefficient
+    path for the log remote-minus-on-site gap.
+    """
+    d = pd.read_csv(str(source[0]))
+    d["t"] = pd.PeriodIndex(d["month"], freq="M").to_timestamp()
+    chatgpt = pd.Timestamp(DATES["ChatGPT"])
+
+    fig, axes = plt.subplots(2, 1, figsize=(10, 9), sharex=True)
+
+    ax = axes[0]
+    ax.axhline(0, color="gray", lw=0.6)
+    ax.axvline(chatgpt, color="k", ls="--", lw=1)
+    for beta_col, se_col, color, label in [
+        ("beta_onsite", "se_onsite", "#004488", "On-site postings"),
+        ("beta_remote", "se_remote", "#CC3311", "Remote postings"),
+    ]:
+        ax.fill_between(
+            d["t"], d[beta_col] - 1.96 * d[se_col], d[beta_col] + 1.96 * d[se_col],
+            color=color, alpha=0.12,
+        )
+        ax.plot(d["t"], d[beta_col], color=color, lw=2, label=label)
+    ax.set_title("Log postings by AI exposure and remote vs. on-site, 95% cluster CI")
+    ax.set_ylabel("Log postings per 1 SD exposure")
+    ax.legend(loc="lower left")
+    ax.text(chatgpt + pd.Timedelta(days=15), ax.get_ylim()[1] * 0.7,
+            "ChatGPT\n(Nov 2022)", fontsize=9)
+    for spine in ["top", "right"]:
+        ax.spines[spine].set_visible(False)
+
+    ax = axes[1]
+    ax.axhline(0, color="gray", lw=0.6)
+    ax.axvline(chatgpt, color="k", ls="--", lw=1)
+    ax.errorbar(
+        d["t"], d["beta_gap"], yerr=1.96 * d["se_gap"], fmt="o",
+        ms=3.5, lw=1, color="#117733", ecolor="#11773355",
+    )
+    ax.set_title("Triple difference: log gap in remote vs. on-site postings on "
+                 "AI exposure x month (ref. Nov 2022), 95% cluster CI")
+    ax.set_ylabel("Differential remote effect per 1 SD")
+    for spine in ["top", "right"]:
+        ax.spines[spine].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsAIExposureHalves(source, target, env):
+    """
+    Employment-weighted posting index for more vs less AI-exposed halves
+    of sectors (median PC1 split), indexed to Nov 2022 = 100, ChatGPT
+    launch marked.
+    """
+    RED, BLUE = "#CC3311", "#4477AA"
+    BASE_MONTH = pd.Period("2022-11")
+    FIG_START = pd.Period("2022-01")
+
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+
+    postings["month"] = pd.to_datetime(postings["dateString"]).dt.to_period("M")
+    mp = postings.groupby(["sectorName", "month"], as_index=False)["value"].mean()
+
+    E = exposure.set_index("sectorName")
+    E["half"] = np.where(E["pc1"] >= E["pc1"].median(), "high", "low")
+
+    m = mp.merge(E[["half", "weight"]], left_on="sectorName", right_index=True)
+    m = m[m["month"] >= FIG_START]
+    base = m[m["month"] == BASE_MONTH].set_index("sectorName")["value"]
+    m["rebased"] = 100 * m["value"] / m["sectorName"].map(base)
+
+    lines = (m.groupby(["half", "month"], observed=True)
+             .apply(lambda g: np.average(g["rebased"], weights=g["weight"]),
+                    include_groups=False)
+             .reset_index(name="idx"))
+    lines["t"] = lines["month"].dt.to_timestamp()
+
+    chatgpt = pd.Timestamp(DATES["ChatGPT"])
+
+    plt.rcParams.update({"font.size": 13})
+    fig, ax = plt.subplots(figsize=(10, 6))
+    for half, color, label in [("low", BLUE, "Low AI-exposure sectors"),
+                               ("high", RED, "High AI-exposure sectors")]:
+        g = lines[lines["half"] == half]
+        ax.plot(g["t"], g["idx"], color=color, lw=3, label=label)
+        ax.text(g["t"].iloc[-1] + pd.Timedelta(days=12), g["idx"].iloc[-1],
+                f"{g['idx'].iloc[-1] - 100:+.0f}%", color=color,
+                fontweight="bold", va="center", fontsize=14)
+    ax.axvline(chatgpt, color="k", ls="--", lw=1.2)
+    ax.text(chatgpt + pd.Timedelta(days=15), 108, "ChatGPT\nlaunches",
+            fontsize=11)
+    ax.axhline(100, color="gray", lw=0.6)
+    ax.set_ylabel("Job postings (Nov 2022 = 100)")
+    ax.set_title("US job postings since ChatGPT: AI-exposed work fell "
+                 "furthest\nIndeed postings, 40 occupational sectors, "
+                 "weighted by employment", fontsize=14, loc="left")
+    ax.legend(frameon=False, loc="upper right")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.set_xlim(FIG_START.to_timestamp(), pd.Timestamp("2026-12-31"))
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsAIExposureLikeForLike(source, target, env):
+    """
+    Like-for-like bar chart: office-type sectors (2021 remote share above
+    sample median), % change in postings Nov 2022 to LATE_START-LATE_END,
+    split into more vs less AI-exposed halves with group averages marked.
+    """
+    RED, BLUE = "#CC3311", "#4477AA"
+    BASE_MONTH = pd.Period("2022-11")
+    LATE_START, LATE_END = pd.Period("2026-03"), pd.Period("2026-06")
+
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+    remote = pd.read_csv(str(source[2]))
+
+    postings["month"] = pd.to_datetime(postings["dateString"]).dt.to_period("M")
+    remote["month"] = pd.to_datetime(remote["dateString"]).dt.to_period("M")
+    mp = postings.groupby(["sectorName", "month"], as_index=False)["value"].mean()
+    mr = (remote.groupby(["sectorName", "month"], as_index=False)["value"]
+          .mean().rename(columns={"value": "share"}))
+
+    E = exposure.set_index("sectorName")
+
+    base_all = mp[mp["month"] == BASE_MONTH].set_index("sectorName")["value"]
+    late = (mp[(mp["month"] >= LATE_START) & (mp["month"] <= LATE_END)]
+            .groupby("sectorName")["value"].mean())
+    chg = (late / base_all - 1) * 100
+
+    telework_2021 = (mr[(mr["month"] >= pd.Period("2021-01"))
+                        & (mr["month"] <= pd.Period("2021-12"))]
+                     .groupby("sectorName")["share"].mean())
+    df = pd.DataFrame({"chg": chg, "pc1": E["pc1"],
+                       "tw": telework_2021}).dropna()
+
+    office = df[df["tw"] >= df["tw"].median()].copy()
+    office["grp"] = np.where(office["pc1"] >= office["pc1"].median(), "hi", "lo")
+    mean_hi = office.loc[office["grp"] == "hi", "chg"].mean()
+    mean_lo = office.loc[office["grp"] == "lo", "chg"].mean()
+
+    office = office.sort_values("chg")
+    colors = office["grp"].map({"hi": RED, "lo": BLUE})
+
+    plt.rcParams.update({"font.size": 12})
+    fig, ax = plt.subplots(figsize=(10, 7.5))
+    ax.barh(range(len(office)), office["chg"], color=colors)
+    ax.set_yticks(range(len(office)))
+    ax.set_yticklabels(office.index)
+    for i, v in enumerate(office["chg"]):
+        ax.text(v - 0.8, i, f"{v:.0f}%", va="center", ha="right",
+                fontsize=10, color="#333")
+    ax.axvline(mean_hi, color=RED, ls=":", lw=2)
+    ax.axvline(mean_lo, color=BLUE, ls=":", lw=2)
+    ax.legend(handles=[
+        Patch(color=RED, label=f"High AI-exposure office jobs "
+                               f"(avg {mean_hi:.0f}%)"),
+        Patch(color=BLUE, label=f"Low AI-exposure office jobs "
+                                f"(avg {mean_lo:.0f}%)"),
+    ], frameon=False, loc="upper left", fontsize=11)
+    ax.set_xlabel("Change in job postings, Nov 2022 to mid-2026 (%)")
+    ax.set_title("Comparing like with like: among office-type jobs,\n"
+                 "the most AI-exposed fell hardest", fontsize=14, loc="left")
+    xmin = min(office["chg"].min(), mean_hi, mean_lo)
+    ax.set_xlim(xmin - 8, 0)
+    ax.spines[["top", "right"]].set_visible(False)
     plt.tight_layout()
     plt.savefig(str(target[0]))
     plt.savefig(str(target[1]), dpi=300)

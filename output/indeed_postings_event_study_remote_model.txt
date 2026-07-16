@@ -1,0 +1,4 @@
+sample: 32 sectors, 2021-01 to 2026-05
+on-site              pre +0.0583  post -0.0742  partial R² 0.2664
+remote               pre +0.0692  post -0.1291  partial R² 0.2661
+gap (triple-diff)    pre +0.0109  post -0.0549  partial R² 0.1215

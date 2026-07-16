@@ -6,18 +6,24 @@ from pipeline.data import (
     DataIndeed,
     DataIndeedPostingIndex,
     DataAIExposure,
-    DataMerge, 
+    DataMerge,
 )
 from pipeline.model import (
     ModelPreCovidOLS,
     ModelIndeedPostingsTWFE,
     ModelIndeedPostingsAIExposureTWFE,
+    ModelIndeedPostingsEventStudy,
+    ModelIndeedPostingsEventStudyRemote,
 )
 from pipeline.plot import(
     PlotTrends,
     PlotAIExposure,
     PlotIndeedPostingsAIExposure,
     PlotIndeedPostingsAvgAIExposure,
+    PlotIndeedPostingsEventStudy,
+    PlotIndeedPostingsAIExposureHalves,
+    PlotIndeedPostingsAIExposureLikeForLike,
+    PlotIndeedPostingsEventStudyRemote,
 )
 
 env = Environment(env=os.environ)
@@ -181,4 +187,76 @@ env.Command(
         output_dir / "indeed_postings_avg_ai_exposure.png",
     ],
     action=PlotIndeedPostingsAvgAIExposure
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index-seasonally-adjusted.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_event_study_model.txt",
+        scratch_dir / "indeed_postings_event_study_coefficients.csv",
+    ],
+    action=ModelIndeedPostingsEventStudy
+)
+
+env.Command(
+    source=[
+        scratch_dir / "indeed_postings_event_study_coefficients.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_event_study.pdf",
+        output_dir / "indeed_postings_event_study.png",
+    ],
+    action=PlotIndeedPostingsEventStudy
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index-seasonally-adjusted.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_ai_exposure_halves.pdf",
+        output_dir / "indeed_postings_ai_exposure_halves.png",
+    ],
+    action=PlotIndeedPostingsAIExposureHalves
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index-seasonally-adjusted.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
+        input_dir / "indeed-job-postings-sector-remote-share.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_ai_exposure_likeforlike.pdf",
+        output_dir / "indeed_postings_ai_exposure_likeforlike.png",
+    ],
+    action=PlotIndeedPostingsAIExposureLikeForLike
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index-seasonally-adjusted.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
+        input_dir / "indeed-job-postings-sector-remote-share.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_event_study_remote_model.txt",
+        scratch_dir / "indeed_postings_event_study_remote_coefficients.csv",
+    ],
+    action=ModelIndeedPostingsEventStudyRemote
+)
+
+env.Command(
+    source=[
+        scratch_dir / "indeed_postings_event_study_remote_coefficients.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_event_study_remote.pdf",
+        output_dir / "indeed_postings_event_study_remote.png",
+    ],
+    action=PlotIndeedPostingsEventStudyRemote
 )

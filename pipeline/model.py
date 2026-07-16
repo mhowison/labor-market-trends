@@ -1,9 +1,14 @@
 import json
+import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from dateutil.relativedelta import relativedelta
 from linearmodels.panel import PanelOLS
 from .data import DATES, load_data
+
+EVENT_STUDY_PANEL_START = pd.Period("2021-01")  # skip 2020 COVID crash
+EVENT_STUDY_REF_MONTH = pd.Period("2022-11")    # month before ChatGPT diffusion
+EVENT_STUDY_REMOTE_PANEL_END = pd.Period("2026-05")    # remote-share series end
 
 
 def ModelPreCovidOLS(source, target, env):
@@ -138,3 +143,159 @@ def ModelIndeedPostingsAIExposureTWFE(source, target, env):
         "partial_r2": partial_r2,
     }])
     results.to_csv(str(target[1]), index=False)
+
+
+def ModelIndeedPostingsEventStudy(source, target, env):
+    """
+    Event study: regress log sector-level posting index on
+    (PC1 AI-exposure x month) interactions with sector and month fixed
+    effects. Standard errors clustered by sector.
+    """
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+
+    postings["month"] = pd.to_datetime(postings["dateString"]).dt.to_period("M")
+    panel = postings.groupby(
+        ["sectorName", "month"], as_index=False
+    )["value"].mean()
+
+    panel = panel.merge(exposure[["sectorName", "pc1"]], on="sectorName")
+    panel = panel[panel["month"] >= EVENT_STUDY_PANEL_START].copy()
+    panel["logy"] = np.log(panel["value"])
+
+    months = sorted(panel["month"].unique())
+    inter_months = [m for m in months if m != EVENT_STUDY_REF_MONTH]
+
+    sector_d = pd.get_dummies(panel["sectorName"], drop_first=True, dtype=float)
+    month_d = pd.get_dummies(panel["month"].astype(str), drop_first=True, dtype=float)
+    month_arr = panel["month"].to_numpy()
+    interactions = np.column_stack([
+        (month_arr == m).astype(float) * panel["pc1"].to_numpy()
+        for m in inter_months
+    ])
+    X_restricted = np.column_stack([np.ones(len(panel)), sector_d, month_d])
+    X = np.column_stack([X_restricted, interactions])
+    k_fe = X_restricted.shape[1]
+
+    y = panel["logy"].to_numpy()
+    res = sm.OLS(y, X).fit(
+        cov_type="cluster", cov_kwds={"groups": panel["sectorName"]}
+    )
+    restricted = sm.OLS(y, X_restricted).fit()
+    partial_r2 = (restricted.ssr - res.ssr) / restricted.ssr
+
+    ev = pd.DataFrame({
+        "month": [str(m) for m in inter_months],
+        "beta": res.params[k_fe:],
+        "se": res.bse[k_fe:],
+    }).sort_values("month")
+
+    pre = ev[ev.month <= "2022-10"]["beta"].mean()
+    post_avg = ev[ev.month >= "2022-12"]["beta"].mean()
+
+    with open(str(target[0]), "w") as f:
+        print(
+            f"panel: {panel.sectorName.nunique()} sectors, "
+            f"{panel.month.min()} to {panel.month.max()}",
+            file=f,
+        )
+        print(f"pre-period avg beta:  {pre:+.4f}", file=f)
+        print(f"post-period avg beta: {post_avg:+.4f}", file=f)
+        print(f"Partial R² (AI exposure interactions vs. sector+month FE): {partial_r2:.4f}", file=f)
+
+    ev.to_csv(str(target[1]), index=False)
+
+
+def ModelIndeedPostingsEventStudyRemote(source, target, env):
+    """
+    Triple-difference: remote vs on-site postings by AI exposure. Decomposes
+    each sector's posting index into remote and on-site components via the
+    sector remote-share series, then estimates split-sample event studies
+    (PC1 exposure x month) for log on-site, log remote, and the gap
+    (log_remote - log_onsite). The gap regression is the triple-diff:
+    sector-x-month FE are absorbed by within-cell differencing, sector-level
+    shocks cancel by construction.
+    """
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+    remote = pd.read_csv(str(source[2]))
+
+    postings["month"] = pd.to_datetime(postings["dateString"]).dt.to_period("M")
+    remote["month"] = pd.to_datetime(remote["dateString"]).dt.to_period("M")
+    mp = (postings.groupby(["sectorName", "month"], as_index=False)["value"]
+          .mean().rename(columns={"value": "idx"}))
+    mr = (remote.groupby(["sectorName", "month"], as_index=False)["value"]
+          .mean().rename(columns={"value": "share"}))
+
+    dec = mp.merge(mr, on=["sectorName", "month"])
+    dec = dec[(dec["month"] >= EVENT_STUDY_PANEL_START) & (dec["month"] <= EVENT_STUDY_REMOTE_PANEL_END)].copy()
+
+    # decompose postings; log odds gap absorbs sector-month FE
+    dec["log_onsite"] = np.log(dec["idx"] * (1 - dec["share"] / 100))
+    dec["log_remote"] = np.log(dec["idx"] * (dec["share"] / 100))
+    dec["gap"] = dec["log_remote"] - dec["log_onsite"]
+
+    # shared design machinery
+    months = sorted(dec["month"].unique())
+    inter_months = [m for m in months if m != EVENT_STUDY_REF_MONTH]
+    month_arr = dec["month"].to_numpy()
+    pc1_map = exposure.set_index("sectorName")["pc1"]
+    z_exp = dec["sectorName"].map(pc1_map)
+    z_exp = ((z_exp - z_exp.mean()) / z_exp.std()).to_numpy()
+
+    FE = np.column_stack([
+        np.ones(len(dec)),
+        pd.get_dummies(dec["sectorName"], drop_first=True, dtype=float),
+        pd.get_dummies(dec["month"].astype(str), drop_first=True, dtype=float),
+    ])
+    interactions = np.column_stack([
+        (month_arr == m).astype(float) * z_exp for m in inter_months
+    ])
+    X = np.column_stack([FE, interactions])
+    k_fe = FE.shape[1]
+
+    def event_study(ycol):
+        y = dec[ycol].to_numpy()
+        res = sm.OLS(y, X).fit(
+            cov_type="cluster", cov_kwds={"groups": dec["sectorName"]}
+        )
+        restricted = sm.OLS(y, FE).fit()
+        partial_r2 = (restricted.ssr - res.ssr) / restricted.ssr
+        df = pd.DataFrame({
+            "month": [str(m) for m in inter_months],
+            "beta": res.params[k_fe:],
+            "se": res.bse[k_fe:],
+        }).sort_values("month")
+        return df, partial_r2
+
+    onsite, r2_onsite = event_study("log_onsite")
+    remote_es, r2_remote = event_study("log_remote")
+    gap, r2_gap = event_study("gap")
+
+    def avg(d):
+        pre = d[d["month"] <= "2022-10"]["beta"].mean()
+        post_avg = d[d["month"] >= "2022-12"]["beta"].mean()
+        return pre, post_avg
+
+    out = (onsite.merge(remote_es, on="month", suffixes=("_onsite", "_remote"))
+           .merge(gap.rename(columns={"beta": "beta_gap", "se": "se_gap"}), on="month"))
+
+    with open(str(target[0]), "w") as f:
+        print(
+            f"sample: {dec.sectorName.nunique()} sectors, "
+            f"{dec.month.min()} to {dec.month.max()}",
+            file=f,
+        )
+        for label, d, r2 in [
+            ("on-site", onsite, r2_onsite),
+            ("remote", remote_es, r2_remote),
+            ("gap (triple-diff)", gap, r2_gap),
+        ]:
+            pre, post_avg = avg(d)
+            print(
+                f"{label:20s} pre {pre:+.4f}  post {post_avg:+.4f}  "
+                f"partial R² {r2:.4f}",
+                file=f,
+            )
+
+    out.to_csv(str(target[1]), index=False)

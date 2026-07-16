@@ -1,11 +1,15 @@
 import os
+import numpy as np
 import pandas as pd
 from datetime import datetime
 
 DATES = {
-    "ChatGPT": datetime(2022, 11, 30),
     "COVID": datetime(2020, 3, 1),
+    "ChatGPT": datetime(2022, 11, 30),
+    "ClaudeCode": datetime(2025, 2, 24),
 }
+
+AI_EXPOSURE_MEASURES = ["aioe", "anthropic", "tomlinson", "eisfeldt", "eloundou"]
 
 def load_data(filename):
     """
@@ -180,5 +184,14 @@ def DataAIExposure(source, target, env):
         }),
         include_groups=False,
     ).reset_index()
+
+    # PC1 composite of AI exposure measures, z-scored, oriented so higher = more exposed
+    Z = (result[AI_EXPOSURE_MEASURES] - result[AI_EXPOSURE_MEASURES].mean()) / result[AI_EXPOSURE_MEASURES].std()
+    _, S, Vt = np.linalg.svd(Z.values, full_matrices=False)
+    pc1 = Z.values @ Vt[0]
+    if np.corrcoef(pc1, result["aioe"])[0, 1] < 0:
+        pc1 = -pc1
+    result["pc1"] = (pc1 - pc1.mean()) / pc1.std()
+    print(f"PC1 share of variance: {S[0]**2 / (S**2).sum():.4f}")
 
     result.to_csv(str(target[0]), index=False)

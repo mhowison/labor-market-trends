@@ -1,0 +1,4 @@
+panel: 40 sectors, 2021-01 to 2026-06
+pre-period avg beta:  +0.0287
+post-period avg beta: -0.0701
+Partial R² (AI exposure interactions vs. sector+month FE): 0.1757
