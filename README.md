@@ -50,7 +50,7 @@ The near-equal loadings make PC1 close to a simple average of the standardized m
 
 ### Recovering Sector Weights from the National Remote Share
 
-Indeed's sector job postings indices are each normalized to 100 on 1 February 2020, so they show how each sector's postings have grown but not how large sectors are relative to each other. Summing them weights every sector equally at the baseline, which overstates small sectors and understates large ones. The breakdown of the remote share by sector (`output/indeed_postings_decompose_remote.pdf`, described in `REPORT.md`) instead recovers each sector's baseline share of postings from Indeed's national remote share, which is a posting-weighted average of the sector remote shares.
+Indeed's sector job postings indices are each normalized to 100 on 1 February 2020, so they show how each sector's postings have grown but not how large sectors are relative to each other. Summing them weights every sector equally at the baseline, which overstates small sectors and understates large ones. The breakdown of the remote share by sector (`output/indeed_postings_decompose_remote.pdf`, described below) instead recovers each sector's baseline share of postings from Indeed's national remote share, which is a posting-weighted average of the sector remote shares.
 
 **Model.** Let $w_s$ be sector $s$'s share of postings in February 2020, $I_{st}$ its posting index (divided by 100), $r_{st}$ its remote share, and $R_t$ the national remote share, all as monthly averages of the non-seasonally-adjusted series. Sector volumes are proportional to $w_s I_{st}$, so
 
@@ -75,7 +75,7 @@ Dividing by $p_s$ scales the penalty to each sector's size, so small sectors are
 
 **Choosing the penalty.** The strength $\lambda$ is chosen by out-of-sample validation over time. The weights are fit on February 2020 through December 2023 for each candidate $\lambda$ and used to predict the national remote share from January 2024 onward. The $\lambda$ with the lowest prediction error is then refit on the full sample. The candidates and the training cutoff are `WEIGHTS_PENALTIES` and `WEIGHTS_TRAIN_END` in `pipeline/model.py`.
 
-**Using the weights.** Each sector's share of postings in month $t$ is $\pi_{st} = w_s I_{st} / \sum_k w_k I_{kt}$ over all sectors, including those without remote data. The sector contributions, the fixed-mix counterfactual, and the remote shares within each AI-exposure half are all built from these shares.
+**Using the weights.** Each sector's share of postings in month $t$ is $\pi_{st} = w_s I_{st} / \sum_k w_k I_{kt}$ over all sectors, including those without remote data. The sector contributions, the fixed-mix counterfactual, and the remote shares within each AI-exposure half are all built from these shares (see the next section).
 
 **Diagnostics.** `output/indeed_postings_decompose_remote_model.txt` reports:
 
@@ -84,6 +84,26 @@ Dividing by $p_s$ scales the penalty to each sector's size, so small sectors are
 - each sector's fitted weight next to its prior, and the fitted remote share for each sector without remote data.
 
 **Limitations.** The weights are estimates. Weights of sectors that move together are uncertain individually even when their sum is well determined, and the penalty ties the weights toward an employment prior that may differ from posting volumes. Indeed postings not assigned to any sector, if any, have no term in the model and are absorbed into the fitted weights or the residual.
+
+### Sector Contributions to the Remote Share
+
+**Remote postings by sector.** With the fitted weights, sector $s$'s share of postings in month $t$ is
+
+$$\pi_{st} = \frac{w_s I_{st}}{\sum_k w_k I_{kt}},$$
+
+summed over all 47 sectors. Its remote postings as a share of all postings are $\pi_{st}\, r_{st}$, and these terms sum across sectors to the fitted national remote share. Sectors without a remote-share series contribute $\pi_{mt}\, \rho_m$ using their fitted constant remote share.
+
+**Contributions.** The base month $0$ is the month in which the national remote share $R_t$ is highest (February 2022). Each sector's contribution to the change since then is the change in its remote postings as a share of all postings:
+
+$$c_{st} = \pi_{st}\, r_{st} - \pi_{s0}\, r_{s0}.$$
+
+A sector contributes negatively if its share of postings falls, its remote share falls, or both. Because the terms $\pi_{st} r_{st}$ add up to the fitted national share, the contributions over all sectors, including those without remote data, sum exactly to the change in the fitted national share. That change differs from the change in Indeed's published series by the fitting error of the weights.
+
+**Mix effect.** The fixed-mix counterfactual holds each sector's posting share at its base-month value while letting sector remote shares evolve, $\sum_s \pi_{s0}\, r_{st}$. The gap between it and the fitted series, $\sum_s (\pi_{s0} - \pi_{st})\, r_{st}$, is the part of the change due to postings shifting between sectors with different remote shares. The plot adds this gap to Indeed's national series to draw the counterfactual.
+
+**By exposure half.** Sectors are colored by the high- and low-AI-exposure halves. The remote share within half $h$ is the posting-weighted average over its sectors with remote data, $R_{ht} = \sum_{s \in h} \pi_{st}\, r_{st} \big/ \sum_{s \in h} \pi_{st}$.
+
+**Interpretation.** The breakdown is an accounting identity. It shows which sectors the change comes from, not why, and it inherits the uncertainty in the estimated weights. The contribution of every sector, with its change in share of postings and in remote share, is in `output/indeed_postings_decompose_remote_model.txt`.
 
 ## Citations
 
