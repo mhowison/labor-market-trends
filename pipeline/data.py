@@ -9,6 +9,11 @@ DATES = {
     "ClaudeCode": datetime(2025, 2, 24),
 }
 
+# Last complete month of the Indeed weekly series. The raw files run a few days
+# into the following month; averaging that partial month would put a
+# low-coverage point at the end of every series, so every consumer clips here.
+PANEL_END = pd.Period("2026-10")
+
 AI_EXPOSURE_MEASURES = ["aioe", "anthropic", "tomlinson", "eisfeldt", "eloundou"]
 
 def load_data(filename):
@@ -29,6 +34,7 @@ def DataIndeed(source, target, env):
     data[name] = data["value"].astype(float)
     if name == "Indeed: AI": 
         data[name] *= 100.0
+    data = data[data["Month"].dt.to_period("M") <= PANEL_END]
     data.set_index("Month").resample("MS")[name].mean().to_csv(str(target[0]))
 
 def DataFred(source, target, env):
@@ -93,6 +99,23 @@ def DataAIExposure(source, target, env):
     """
     Merge AI exposure measures from multiple sources, aggregated by Indeed sector.
     """
+    # Load OEWS data and its detailed occupation employment
+    oews = pd.read_excel(str(source[5]))
+    detailed = oews[oews["O_GROUP"] == "detailed"][["OCC_CODE", "OCC_TITLE", "TOT_EMP"]].copy()
+    detailed["TOT_EMP"] = pd.to_numeric(detailed["TOT_EMP"], errors="coerce")
+    oews_codes = set(detailed["OCC_CODE"])
+
+    def to_oews_code(codes):
+        """
+        Roll SOC codes up to the granularity OEWS publishes. A few OEWS
+        "detailed" rows are really broad codes ending in 0 (e.g. 31-1120 Home
+        Health and Personal Care Aides), while the exposure sources score the
+        finer codes beneath them (31-1121, 31-1122). Without this, those
+        occupations drop out of every merge.
+        """
+        broad = codes.str[:-1] + "0"
+        return codes.where(codes.isin(oews_codes) | ~broad.isin(oews_codes), broad)
+
     # Load SOC 2010→2018 crosswalk
     crosswalk = pd.read_excel(str(source[7]), header=8)
     crosswalk = crosswalk.rename(columns={
@@ -105,30 +128,34 @@ def DataAIExposure(source, target, env):
     aioe = aioe.rename(columns={"SOC Code": "soc2010"})
     aioe = aioe[["soc2010", "AIOE"]]
     aioe = pd.merge(aioe, crosswalk, on="soc2010", how="left")
-    aioe["occ_code"] = aioe["soc2018"].fillna(aioe["soc2010"])
+    aioe["occ_code"] = to_oews_code(aioe["soc2018"].fillna(aioe["soc2010"]))
     aioe = aioe.groupby("occ_code")["AIOE"].mean().reset_index()
 
     # Load Anthropic data
     anthropic = pd.read_csv(str(source[1]))
-    anthropic = anthropic[["occ_code", "title", "observed_exposure"]]
+    anthropic = anthropic[["occ_code", "title", "observed_exposure"]].copy()
+    anthropic["occ_code"] = to_oews_code(anthropic["occ_code"])
+    anthropic = anthropic.groupby("occ_code")["observed_exposure"].mean().reset_index()
 
     # Load Eisfeldt et al. GenAI exposure data (SOC 2010) and map to SOC 2018
     eisfeldt = pd.read_csv(str(source[2]))
     eisfeldt = eisfeldt.rename(columns={"soc2010": "soc2010"})
     eisfeldt = eisfeldt[["soc2010", "genaiexp_estz_total"]]
     eisfeldt = pd.merge(eisfeldt, crosswalk, on="soc2010", how="left")
-    eisfeldt["occ_code"] = eisfeldt["soc2018"].fillna(eisfeldt["soc2010"])
+    eisfeldt["occ_code"] = to_oews_code(eisfeldt["soc2018"].fillna(eisfeldt["soc2010"]))
     eisfeldt = eisfeldt.groupby("occ_code")["genaiexp_estz_total"].mean().reset_index()
 
     # Load Eloundou et al. exposure data (O*NET codes → 6-digit SOC)
     eloundou = pd.read_csv(str(source[3]))
-    eloundou["occ_code"] = eloundou["O*NET-SOC Code"].str[:7]
+    eloundou["occ_code"] = to_oews_code(eloundou["O*NET-SOC Code"].str[:7])
     eloundou = eloundou.groupby("occ_code")["dv_rating_beta"].mean().reset_index()
 
     # Load Tomlinson et al. AI applicability scores
     tomlinson = pd.read_csv(str(source[4]))
     tomlinson = tomlinson.rename(columns={"SOC Code": "occ_code"})
-    tomlinson = tomlinson[["occ_code", "ai_applicability_score"]]
+    tomlinson = tomlinson[["occ_code", "ai_applicability_score"]].copy()
+    tomlinson["occ_code"] = to_oews_code(tomlinson["occ_code"])
+    tomlinson = tomlinson.groupby("occ_code")["ai_applicability_score"].mean().reset_index()
 
     # Merge all five sources on occupation code
     merged = pd.merge(aioe, anthropic, on="occ_code", how="outer")
@@ -136,15 +163,7 @@ def DataAIExposure(source, target, env):
     merged = pd.merge(merged, eloundou, on="occ_code", how="outer")
     merged = pd.merge(merged, tomlinson, on="occ_code", how="outer")
 
-    # Load OEWS data
-    oews = pd.read_excel(str(source[5]))
-
-    # Get detailed occupation employment
-    detailed = oews[oews["O_GROUP"] == "detailed"][["OCC_CODE", "OCC_TITLE", "TOT_EMP"]].copy()
-    detailed["TOT_EMP"] = pd.to_numeric(detailed["TOT_EMP"], errors="coerce")
-
     # Verify all source SOC codes map to an OEWS detailed occupation
-    oews_codes = set(detailed["OCC_CODE"])
     for name, codes in [
         ("AIOE", aioe["occ_code"]),
         ("Anthropic", anthropic["occ_code"]),
@@ -187,6 +206,17 @@ def DataAIExposure(source, target, env):
 
     # PC1 composite of AI exposure measures, z-scored, oriented so higher = more exposed
     Z = (result[AI_EXPOSURE_MEASURES] - result[AI_EXPOSURE_MEASURES].mean()) / result[AI_EXPOSURE_MEASURES].std()
+
+    # A measure can be missing for every occupation in a sector (no source
+    # covers it). Impute those cells at the cross-sector mean (zero in z-space)
+    # so the SVD is defined; report them, since they weaken that sector's PC1.
+    missing = Z.isna()
+    if missing.any().any():
+        for i, row in missing[missing.any(axis=1)].iterrows():
+            gaps = ", ".join(row.index[row])
+            print(f"PC1: no {gaps} coverage for {result.loc[i, 'sectorName']}; imputed at mean")
+        Z = Z.fillna(0.0)
+
     _, S, Vt = np.linalg.svd(Z.values, full_matrices=False)
     pc1 = Z.values @ Vt[0]
     if np.corrcoef(pc1, result["aioe"])[0, 1] < 0:

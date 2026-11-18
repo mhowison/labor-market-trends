@@ -11,9 +11,11 @@ from pipeline.data import (
 from pipeline.model import (
     ModelPreCovidOLS,
     ModelIndeedPostingsTWFE,
+    ModelIndeedRemoteShareFE,
     ModelIndeedPostingsAIExposureTWFE,
     ModelIndeedPostingsEventStudy,
     ModelIndeedPostingsEventStudyRemote,
+    ModelIndeedPostingsDecomposeRemote,
 )
 from pipeline.plot import(
     PlotTrends,
@@ -24,6 +26,8 @@ from pipeline.plot import(
     PlotIndeedPostingsAIExposureHalves,
     PlotIndeedPostingsAIExposureLikeForLike,
     PlotIndeedPostingsEventStudyRemote,
+    PlotIndeedPostingsDecomposeRemote,
+    PlotIndeedPostingsRemoteComponents,
 )
 
 env = Environment(env=os.environ)
@@ -127,6 +131,18 @@ env.Command(
         scratch_dir / "indeed_postings_model.csv",
     ],
     action=ModelIndeedPostingsTWFE
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-remote-share.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
+    ],
+    target=[
+        output_dir / "indeed_remote_share_model.txt",
+        scratch_dir / "indeed_remote_share_model.csv",
+    ],
+    action=ModelIndeedRemoteShareFE
 )
 
 env.Command(
@@ -259,4 +275,44 @@ env.Command(
         output_dir / "indeed_postings_event_study_remote.png",
     ],
     action=PlotIndeedPostingsEventStudyRemote
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index.csv",
+        output_dir / "indeed_sector_ai_exposure.csv",
+        input_dir / "indeed-job-postings-sector-remote-share.csv",
+        input_dir / "indeed-job-postings-remote-share.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_decompose_remote_model.txt",
+        scratch_dir / "indeed_postings_decompose_remote.csv",
+        scratch_dir / "indeed_postings_decompose_remote_sectors.csv",
+    ],
+    action=ModelIndeedPostingsDecomposeRemote
+)
+
+env.Command(
+    source=[
+        scratch_dir / "indeed_postings_decompose_remote.csv",
+        scratch_dir / "indeed_postings_decompose_remote_sectors.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_decompose_remote.pdf",
+        output_dir / "indeed_postings_decompose_remote.png",
+    ],
+    action=PlotIndeedPostingsDecomposeRemote
+)
+
+env.Command(
+    source=[
+        input_dir / "indeed-job-postings-sector-index.csv",
+        input_dir / "indeed-job-postings-sector-remote-share.csv",
+        input_dir / "indeed-job-postings-remote-share.csv",
+    ],
+    target=[
+        output_dir / "indeed_postings_remote_components.pdf",
+        output_dir / "indeed_postings_remote_components.png",
+    ],
+    action=PlotIndeedPostingsRemoteComponents
 )

@@ -18,7 +18,7 @@ OCC_CODE,OCC_TITLE,sectorName
 11-3121,Human Resources Managers,Human Resources
 11-3131,Training and Development Managers,Human Resources
 11-9013,"Farmers, Ranchers, and Other Agricultural Managers",Management
-11-9021,Construction Managers,Project Management
+11-9021,Construction Managers,Construction
 11-9031,"Education and Childcare Administrators, Preschool and Daycare",Childcare
 11-9032,"Education Administrators, Kindergarten through Secondary",Education & Instruction
 11-9033,"Education Administrators, Postsecondary",Education & Instruction
@@ -39,8 +39,8 @@ OCC_CODE,OCC_TITLE,sectorName
 11-9199,"Managers, All Other",Management
 13-1011,"Agents and Business Managers of Artists, Performers, and Athletes",Arts & Entertainment
 13-1020,Buyers and Purchasing Agents,Management
-13-1031,"Claims Adjusters, Examiners, and Investigators",Banking & Finance
-13-1032,"Insurance Appraisers, Auto Damage",Banking & Finance
+13-1031,"Claims Adjusters, Examiners, and Investigators",Insurance
+13-1032,"Insurance Appraisers, Auto Damage",Insurance
 13-1041,Compliance Officers,Management
 13-1051,Cost Estimators,Accounting
 13-1071,Human Resources Specialists,Human Resources
@@ -61,7 +61,7 @@ OCC_CODE,OCC_TITLE,sectorName
 13-2041,Credit Analysts,Banking & Finance
 13-2051,Financial and Investment Analysts,Banking & Finance
 13-2052,Personal Financial Advisors,Banking & Finance
-13-2053,Insurance Underwriters,Banking & Finance
+13-2053,Insurance Underwriters,Insurance
 13-2054,Financial Risk Specialists,Banking & Finance
 13-2061,Financial Examiners,Banking & Finance
 13-2071,Credit Counselors,Banking & Finance
@@ -94,7 +94,7 @@ OCC_CODE,OCC_TITLE,sectorName
 17-1012,Landscape Architects,Architecture
 17-1021,Cartographers and Photogrammetrists,Architecture
 17-1022,Surveyors,Architecture
-17-2011,Aerospace Engineers,Industrial Engineering
+17-2011,Aerospace Engineers,Aviation
 17-2021,Agricultural Engineers,Industrial Engineering
 17-2031,Bioengineers and Biomedical Engineers,Industrial Engineering
 17-2041,Chemical Engineers,Industrial Engineering
@@ -305,30 +305,30 @@ OCC_CODE,OCC_TITLE,sectorName
 27-4032,Film and Video Editors,Media & Communications
 27-4099,"Media and Communication Equipment Workers, All Other",Media & Communications
 29-1011,Chiropractors,Physicians & Surgeons
-29-1021,"Dentists, General",Physicians & Surgeons
-29-1022,Oral and Maxillofacial Surgeons,Physicians & Surgeons
-29-1023,Orthodontists,Physicians & Surgeons
-29-1024,Prosthodontists,Physicians & Surgeons
-29-1029,"Dentists, All Other Specialists",Physicians & Surgeons
+29-1021,"Dentists, General",Dental
+29-1022,Oral and Maxillofacial Surgeons,Dental
+29-1023,Orthodontists,Dental
+29-1024,Prosthodontists,Dental
+29-1029,"Dentists, All Other Specialists",Dental
 29-1031,Dietitians and Nutritionists,Physicians & Surgeons
 29-1041,Optometrists,Physicians & Surgeons
 29-1051,Pharmacists,Pharmacy
 29-1071,Physician Assistants,Physicians & Surgeons
 29-1081,Podiatrists,Physicians & Surgeons
-29-1122,Occupational Therapists,Physicians & Surgeons
-29-1123,Physical Therapists,Physicians & Surgeons
-29-1124,Radiation Therapists,Physicians & Surgeons
-29-1125,Recreational Therapists,Physicians & Surgeons
-29-1126,Respiratory Therapists,Physicians & Surgeons
-29-1127,Speech-Language Pathologists,Physicians & Surgeons
-29-1128,Exercise Physiologists,Physicians & Surgeons
-29-1129,"Therapists, All Other",Physicians & Surgeons
+29-1122,Occupational Therapists,Therapy
+29-1123,Physical Therapists,Therapy
+29-1124,Radiation Therapists,Therapy
+29-1125,Recreational Therapists,Therapy
+29-1126,Respiratory Therapists,Therapy
+29-1127,Speech-Language Pathologists,Therapy
+29-1128,Exercise Physiologists,Therapy
+29-1129,"Therapists, All Other",Therapy
 29-1131,Veterinarians,Physicians & Surgeons
 29-1141,Registered Nurses,Nursing
 29-1151,Nurse Anesthetists,Nursing
 29-1161,Nurse Midwives,Nursing
 29-1171,Nurse Practitioners,Nursing
-29-1181,Audiologists,Physicians & Surgeons
+29-1181,Audiologists,Therapy
 29-1211,Anesthesiologists,Physicians & Surgeons
 29-1212,Cardiologists,Physicians & Surgeons
 29-1213,Dermatologists,Physicians & Surgeons
@@ -347,7 +347,7 @@ OCC_CODE,OCC_TITLE,sectorName
 29-1243,Pediatric Surgeons,Physicians & Surgeons
 29-1249,"Surgeons, All Other",Physicians & Surgeons
 29-1291,Acupuncturists,Physicians & Surgeons
-29-1292,Dental Hygienists,Medical Technician
+29-1292,Dental Hygienists,Dental
 29-1299,"Healthcare Diagnosing or Treating Practitioners, All Other",Physicians & Surgeons
 29-2010,Clinical Laboratory Technologists and Technicians,Medical Technician
 29-2031,Cardiovascular Technologists and Technicians,Medical Technician
@@ -375,16 +375,16 @@ OCC_CODE,OCC_TITLE,sectorName
 29-9092,Genetic Counselors,Medical Information
 29-9093,Surgical Assistants,Medical Technician
 29-9099,"Healthcare Practitioners and Technical Workers, All Other",Medical Technician
-31-1120,Home Health and Personal Care Aides,Nursing
+31-1120,Home Health and Personal Care Aides,Personal Care & Home Health
 31-1131,Nursing Assistants,Nursing
 31-1132,Orderlies,Nursing
 31-1133,Psychiatric Aides,Nursing
-31-2011,Occupational Therapy Assistants,Medical Technician
-31-2012,Occupational Therapy Aides,Medical Technician
-31-2021,Physical Therapist Assistants,Medical Technician
-31-2022,Physical Therapist Aides,Medical Technician
-31-9011,Massage Therapists,Medical Technician
-31-9091,Dental Assistants,Medical Technician
+31-2011,Occupational Therapy Assistants,Therapy
+31-2012,Occupational Therapy Aides,Therapy
+31-2021,Physical Therapist Assistants,Therapy
+31-2022,Physical Therapist Aides,Therapy
+31-9011,Massage Therapists,Therapy
+31-9091,Dental Assistants,Dental
 31-9092,Medical Assistants,Medical Technician
 31-9093,Medical Equipment Preparers,Medical Technician
 31-9094,Medical Transcriptionists,Medical Information
@@ -483,7 +483,7 @@ OCC_CODE,OCC_TITLE,sectorName
 41-2022,Parts Salespersons,Retail
 41-2031,Retail Salespersons,Retail
 41-3011,Advertising Sales Agents,Sales
-41-3021,Insurance Sales Agents,Sales
+41-3021,Insurance Sales Agents,Insurance
 41-3031,"Securities, Commodities, and Financial Services Sales Agents",Banking & Finance
 41-3041,Travel Agents,Hospitality & Tourism
 41-3091,"Sales Representatives of Services, Except Advertising, Insurance, Financial Services, and Travel",Sales
@@ -544,7 +544,7 @@ OCC_CODE,OCC_TITLE,sectorName
 43-9021,Data Entry Keyers,Administrative Assistance
 43-9022,Word Processors and Typists,Administrative Assistance
 43-9031,Desktop Publishers,Administrative Assistance
-43-9041,Insurance Claims and Policy Processing Clerks,Banking & Finance
+43-9041,Insurance Claims and Policy Processing Clerks,Insurance
 43-9051,"Mail Clerks and Mail Machine Operators, Except Postal Service",Administrative Assistance
 43-9061,"Office Clerks, General",Administrative Assistance
 43-9071,"Office Machine Operators, Except Computer",Administrative Assistance
@@ -564,66 +564,66 @@ OCC_CODE,OCC_TITLE,sectorName
 45-4022,Logging Equipment Operators,Production & Manufacturing
 45-4023,Log Graders and Scalers,Production & Manufacturing
 45-4029,"Logging Workers, All Other",Production & Manufacturing
-47-1011,First-Line Supervisors of Construction Trades and Extraction Workers,Installation & Maintenance
-47-2011,Boilermakers,Installation & Maintenance
-47-2021,Brickmasons and Blockmasons,Installation & Maintenance
-47-2022,Stonemasons,Installation & Maintenance
-47-2031,Carpenters,Installation & Maintenance
-47-2041,Carpet Installers,Installation & Maintenance
-47-2042,"Floor Layers, Except Carpet, Wood, and Hard Tiles",Installation & Maintenance
-47-2043,Floor Sanders and Finishers,Installation & Maintenance
-47-2044,Tile and Stone Setters,Installation & Maintenance
-47-2051,Cement Masons and Concrete Finishers,Installation & Maintenance
-47-2053,Terrazzo Workers and Finishers,Installation & Maintenance
-47-2061,Construction Laborers,Installation & Maintenance
-47-2071,"Paving, Surfacing, and Tamping Equipment Operators",Installation & Maintenance
-47-2072,Pile Driver Operators,Installation & Maintenance
-47-2073,Operating Engineers and Other Construction Equipment Operators,Installation & Maintenance
-47-2081,Drywall and Ceiling Tile Installers,Installation & Maintenance
-47-2082,Tapers,Installation & Maintenance
-47-2111,Electricians,Installation & Maintenance
-47-2121,Glaziers,Installation & Maintenance
-47-2131,"Insulation Workers, Floor, Ceiling, and Wall",Installation & Maintenance
-47-2132,"Insulation Workers, Mechanical",Installation & Maintenance
-47-2141,"Painters, Construction and Maintenance",Installation & Maintenance
-47-2142,Paperhangers,Installation & Maintenance
-47-2151,Pipelayers,Installation & Maintenance
-47-2152,"Plumbers, Pipefitters, and Steamfitters",Installation & Maintenance
-47-2161,Plasterers and Stucco Masons,Installation & Maintenance
-47-2171,Reinforcing Iron and Rebar Workers,Installation & Maintenance
-47-2181,Roofers,Installation & Maintenance
-47-2211,Sheet Metal Workers,Installation & Maintenance
-47-2221,Structural Iron and Steel Workers,Installation & Maintenance
-47-2231,Solar Photovoltaic Installers,Installation & Maintenance
-47-3011,"Helpers--Brickmasons, Blockmasons, Stonemasons, and Tile and Marble Setters",Installation & Maintenance
-47-3012,Helpers--Carpenters,Installation & Maintenance
-47-3013,Helpers--Electricians,Installation & Maintenance
-47-3014,"Helpers--Painters, Paperhangers, Plasterers, and Stucco Masons",Installation & Maintenance
-47-3015,"Helpers--Pipelayers, Plumbers, Pipefitters, and Steamfitters",Installation & Maintenance
-47-3016,Helpers--Roofers,Installation & Maintenance
-47-3019,"Helpers, Construction Trades, All Other",Installation & Maintenance
-47-4011,Construction and Building Inspectors,Installation & Maintenance
-47-4021,Elevator and Escalator Installers and Repairers,Installation & Maintenance
-47-4031,Fence Erectors,Installation & Maintenance
-47-4041,Hazardous Materials Removal Workers,Installation & Maintenance
-47-4051,Highway Maintenance Workers,Installation & Maintenance
-47-4061,Rail-Track Laying and Maintenance Equipment Operators,Installation & Maintenance
-47-4071,Septic Tank Servicers and Sewer Pipe Cleaners,Installation & Maintenance
-47-4090,Miscellaneous Construction and Related Workers,Installation & Maintenance
-47-5011,"Derrick Operators, Oil and Gas",Installation & Maintenance
-47-5012,"Rotary Drill Operators, Oil and Gas",Installation & Maintenance
-47-5013,"Service Unit Operators, Oil and Gas",Installation & Maintenance
-47-5022,"Excavating and Loading Machine and Dragline Operators, Surface Mining",Installation & Maintenance
-47-5023,"Earth Drillers, Except Oil and Gas",Installation & Maintenance
-47-5032,"Explosives Workers, Ordnance Handling Experts, and Blasters",Installation & Maintenance
-47-5041,Continuous Mining Machine Operators,Installation & Maintenance
-47-5043,"Roof Bolters, Mining",Installation & Maintenance
-47-5044,"Loading and Moving Machine Operators, Underground Mining",Installation & Maintenance
-47-5049,"Underground Mining Machine Operators, All Other",Installation & Maintenance
-47-5051,"Rock Splitters, Quarry",Installation & Maintenance
-47-5071,"Roustabouts, Oil and Gas",Installation & Maintenance
-47-5081,Helpers--Extraction Workers,Installation & Maintenance
-47-5099,"Extraction Workers, All Other",Installation & Maintenance
+47-1011,First-Line Supervisors of Construction Trades and Extraction Workers,Construction
+47-2011,Boilermakers,Construction
+47-2021,Brickmasons and Blockmasons,Construction
+47-2022,Stonemasons,Construction
+47-2031,Carpenters,Construction
+47-2041,Carpet Installers,Construction
+47-2042,"Floor Layers, Except Carpet, Wood, and Hard Tiles",Construction
+47-2043,Floor Sanders and Finishers,Construction
+47-2044,Tile and Stone Setters,Construction
+47-2051,Cement Masons and Concrete Finishers,Construction
+47-2053,Terrazzo Workers and Finishers,Construction
+47-2061,Construction Laborers,Construction
+47-2071,"Paving, Surfacing, and Tamping Equipment Operators",Construction
+47-2072,Pile Driver Operators,Construction
+47-2073,Operating Engineers and Other Construction Equipment Operators,Construction
+47-2081,Drywall and Ceiling Tile Installers,Construction
+47-2082,Tapers,Construction
+47-2111,Electricians,Construction
+47-2121,Glaziers,Construction
+47-2131,"Insulation Workers, Floor, Ceiling, and Wall",Construction
+47-2132,"Insulation Workers, Mechanical",Construction
+47-2141,"Painters, Construction and Maintenance",Construction
+47-2142,Paperhangers,Construction
+47-2151,Pipelayers,Construction
+47-2152,"Plumbers, Pipefitters, and Steamfitters",Construction
+47-2161,Plasterers and Stucco Masons,Construction
+47-2171,Reinforcing Iron and Rebar Workers,Construction
+47-2181,Roofers,Construction
+47-2211,Sheet Metal Workers,Construction
+47-2221,Structural Iron and Steel Workers,Construction
+47-2231,Solar Photovoltaic Installers,Construction
+47-3011,"Helpers--Brickmasons, Blockmasons, Stonemasons, and Tile and Marble Setters",Construction
+47-3012,Helpers--Carpenters,Construction
+47-3013,Helpers--Electricians,Construction
+47-3014,"Helpers--Painters, Paperhangers, Plasterers, and Stucco Masons",Construction
+47-3015,"Helpers--Pipelayers, Plumbers, Pipefitters, and Steamfitters",Construction
+47-3016,Helpers--Roofers,Construction
+47-3019,"Helpers, Construction Trades, All Other",Construction
+47-4011,Construction and Building Inspectors,Construction
+47-4021,Elevator and Escalator Installers and Repairers,Construction
+47-4031,Fence Erectors,Construction
+47-4041,Hazardous Materials Removal Workers,Construction
+47-4051,Highway Maintenance Workers,Construction
+47-4061,Rail-Track Laying and Maintenance Equipment Operators,Construction
+47-4071,Septic Tank Servicers and Sewer Pipe Cleaners,Construction
+47-4090,Miscellaneous Construction and Related Workers,Construction
+47-5011,"Derrick Operators, Oil and Gas",Construction
+47-5012,"Rotary Drill Operators, Oil and Gas",Construction
+47-5013,"Service Unit Operators, Oil and Gas",Construction
+47-5022,"Excavating and Loading Machine and Dragline Operators, Surface Mining",Construction
+47-5023,"Earth Drillers, Except Oil and Gas",Construction
+47-5032,"Explosives Workers, Ordnance Handling Experts, and Blasters",Construction
+47-5041,Continuous Mining Machine Operators,Construction
+47-5043,"Roof Bolters, Mining",Construction
+47-5044,"Loading and Moving Machine Operators, Underground Mining",Construction
+47-5049,"Underground Mining Machine Operators, All Other",Construction
+47-5051,"Rock Splitters, Quarry",Construction
+47-5071,"Roustabouts, Oil and Gas",Construction
+47-5081,Helpers--Extraction Workers,Construction
+47-5099,"Extraction Workers, All Other",Construction
 49-1011,"First-Line Supervisors of Mechanics, Installers, and Repairers",Installation & Maintenance
 49-2011,"Computer, Automated Teller, and Office Machine Repairers","IT Infrastructure, Operations & Support"
 49-2021,"Radio, Cellular, and Tower Equipment Installers and Repairers",Installation & Maintenance
@@ -636,7 +636,7 @@ OCC_CODE,OCC_TITLE,sectorName
 49-2096,"Electronic Equipment Installers and Repairers, Motor Vehicles",Installation & Maintenance
 49-2097,Audiovisual Equipment Installers and Repairers,Installation & Maintenance
 49-2098,Security and Fire Alarm Systems Installers,Installation & Maintenance
-49-3011,Aircraft Mechanics and Service Technicians,Installation & Maintenance
+49-3011,Aircraft Mechanics and Service Technicians,Aviation
 49-3021,Automotive Body and Related Repairers,Installation & Maintenance
 49-3022,Automotive Glass Installers and Repairers,Installation & Maintenance
 49-3023,Automotive Service Technicians and Mechanics,Installation & Maintenance
@@ -676,7 +676,7 @@ OCC_CODE,OCC_TITLE,sectorName
 49-9098,"Helpers--Installation, Maintenance, and Repair Workers",Installation & Maintenance
 49-9099,"Installation, Maintenance, and Repair Workers, All Other",Installation & Maintenance
 51-1011,First-Line Supervisors of Production and Operating Workers,Production & Manufacturing
-51-2011,"Aircraft Structure, Surfaces, Rigging, and Systems Assemblers",Production & Manufacturing
+51-2011,"Aircraft Structure, Surfaces, Rigging, and Systems Assemblers",Aviation
 51-2021,"Coil Winders, Tapers, and Finishers",Production & Manufacturing
 51-2028,"Electrical, Electronic, and Electromechanical Assemblers, Except Coil Winders, Tapers, and Finishers",Production & Manufacturing
 51-2031,Engine and Other Machine Assemblers,Production & Manufacturing
@@ -761,7 +761,7 @@ OCC_CODE,OCC_TITLE,sectorName
 51-9051,"Furnace, Kiln, Oven, Drier, and Kettle Operators and Tenders",Production & Manufacturing
 51-9061,"Inspectors, Testers, Sorters, Samplers, and Weighers",Production & Manufacturing
 51-9071,Jewelers and Precious Stone and Metal Workers,Production & Manufacturing
-51-9081,Dental Laboratory Technicians,Production & Manufacturing
+51-9081,Dental Laboratory Technicians,Dental
 51-9082,Medical Appliance Technicians,Production & Manufacturing
 51-9083,Ophthalmic Laboratory Technicians,Production & Manufacturing
 51-9111,Packaging and Filling Machine Operators and Tenders,Production & Manufacturing
@@ -780,22 +780,22 @@ OCC_CODE,OCC_TITLE,sectorName
 51-9197,Tire Builders,Production & Manufacturing
 51-9198,Helpers--Production Workers,Production & Manufacturing
 51-9199,"Production Workers, All Other",Production & Manufacturing
-53-1041,Aircraft Cargo Handling Supervisors,Logistic Support
+53-1041,Aircraft Cargo Handling Supervisors,Aviation
 53-1047,"First-Line Supervisors of Transportation and Material Moving Workers, Except Aircraft Cargo Handling Supervisors",Logistic Support
-53-2011,"Airline Pilots, Copilots, and Flight Engineers",Logistic Support
-53-2012,Commercial Pilots,Logistic Support
-53-2021,Air Traffic Controllers,Logistic Support
-53-2022,Airfield Operations Specialists,Logistic Support
-53-2031,Flight Attendants,Hospitality & Tourism
-53-3011,"Ambulance Drivers and Attendants, Except Emergency Medical Technicians",Logistic Support
-53-3031,Driver/Sales Workers,Logistic Support
-53-3032,Heavy and Tractor-Trailer Truck Drivers,Logistic Support
-53-3033,Light Truck Drivers,Logistic Support
-53-3051,"Bus Drivers, School",Logistic Support
-53-3052,"Bus Drivers, Transit and Intercity",Logistic Support
-53-3053,Shuttle Drivers and Chauffeurs,Logistic Support
-53-3054,Taxi Drivers,Logistic Support
-53-3099,"Motor Vehicle Operators, All Other",Logistic Support
+53-2011,"Airline Pilots, Copilots, and Flight Engineers",Aviation
+53-2012,Commercial Pilots,Aviation
+53-2021,Air Traffic Controllers,Aviation
+53-2022,Airfield Operations Specialists,Aviation
+53-2031,Flight Attendants,Aviation
+53-3011,"Ambulance Drivers and Attendants, Except Emergency Medical Technicians",Driving
+53-3031,Driver/Sales Workers,Driving
+53-3032,Heavy and Tractor-Trailer Truck Drivers,Driving
+53-3033,Light Truck Drivers,Driving
+53-3051,"Bus Drivers, School",Driving
+53-3052,"Bus Drivers, Transit and Intercity",Driving
+53-3053,Shuttle Drivers and Chauffeurs,Driving
+53-3054,Taxi Drivers,Driving
+53-3099,"Motor Vehicle Operators, All Other",Driving
 53-4011,Locomotive Engineers,Logistic Support
 53-4013,"Rail Yard Engineers, Dinkey Operators, and Hostlers",Logistic Support
 53-4022,"Railroad Brake, Signal, and Switch Operators and Locomotive Firers",Logistic Support
@@ -809,7 +809,7 @@ OCC_CODE,OCC_TITLE,sectorName
 53-6011,Bridge and Lock Tenders,Logistic Support
 53-6021,Parking Attendants,Logistic Support
 53-6031,Automotive and Watercraft Service Attendants,Logistic Support
-53-6032,Aircraft Service Attendants,Logistic Support
+53-6032,Aircraft Service Attendants,Aviation
 53-6041,Traffic Technicians,Logistic Support
 53-6051,Transportation Inspectors,Logistic Support
 53-6061,Passenger Attendants,Logistic Support

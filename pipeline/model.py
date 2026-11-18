@@ -1,14 +1,19 @@
 import json
+import cvxpy as cp
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from dateutil.relativedelta import relativedelta
 from linearmodels.panel import PanelOLS
-from .data import DATES, load_data
+from scipy.optimize import minimize
+from .data import DATES, PANEL_END, load_data
 
 EVENT_STUDY_PANEL_START = pd.Period("2021-01")  # skip 2020 COVID crash
 EVENT_STUDY_REF_MONTH = pd.Period("2022-11")    # month before ChatGPT diffusion
-EVENT_STUDY_REMOTE_PANEL_END = pd.Period("2026-05")    # remote-share series end
+# sector weight fit: candidate penalties toward the OEWS prior, chosen by
+# out-of-sample error after the training period
+WEIGHTS_PENALTIES = [0, 1e-6, 1e-5, 3e-5, 1e-4, 3e-4, 1e-3]
+WEIGHTS_TRAIN_END = pd.Period("2023-12")
 
 
 def ModelPreCovidOLS(source, target, env):
@@ -63,6 +68,60 @@ def ModelIndeedPostingsTWFE(source, target, env):
 
     with open(str(target[0]), "w") as f:
         print(model.summary, file=f)
+
+    results = pd.DataFrame([{
+        r: model.params[r] for r in regressors
+    }])
+    results.to_csv(str(target[1]), index=False)
+
+
+def ModelIndeedRemoteShareFE(source, target, env):
+    """
+    Week-of-year fixed effects model for Indeed remote share of postings (%)
+    by sector, with the sector's AI exposure (PC1) as the regressor. Reports
+    how much of the variation in remote share exposure explains: the
+    within-week R² from the fit, and the R² of week effects alone and with
+    exposure added.
+    """
+    data = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+    data["date"] = pd.to_datetime(data["dateString"])
+
+    chatgpt = DATES["ChatGPT"]
+    start = chatgpt - relativedelta(years=1)
+    end = chatgpt + relativedelta(years=1)
+
+    data = data[(data["date"] >= start) & (data["date"] < end)]
+    data = data.merge(exposure[["sectorName", "pc1"]], on="sectorName")
+
+    # Week-of-year for time fixed effects
+    data["week"] = data["date"].dt.isocalendar().week.astype(int)
+
+    regressors = ["pc1"]
+
+    # Set multi-index for panel: entity=sector, time=week-of-year
+    data = data.set_index(["sectorName", "week"])
+
+    model = PanelOLS(
+        data["value"].astype(float),
+        data[regressors],
+        time_effects=True,
+    ).fit(cov_type="clustered", cluster_entity=True)
+
+    # share of total variation explained by week effects, alone and with
+    # exposure added
+    y = data["value"].astype(float)
+    week = y.index.get_level_values("week")
+    tss = ((y - y.mean()) ** 2).sum()
+    r2_week = 1 - ((y - y.groupby(week).transform("mean")) ** 2).sum() / tss
+    r2_full = 1 - (model.resids ** 2).sum() / tss
+
+    with open(str(target[0]), "w") as f:
+        print(model.summary, file=f)
+        print(f"\nR² of week effects alone: {r2_week:.4f}", file=f)
+        print(f"R² of week effects + AI exposure: {r2_full:.4f}", file=f)
+        print(f"Partial R² of AI exposure (within week): {model.rsquared:.4f}",
+              file=f)
 
     results = pd.DataFrame([{
         r: model.params[r] for r in regressors
@@ -160,7 +219,8 @@ def ModelIndeedPostingsEventStudy(source, target, env):
     )["value"].mean()
 
     panel = panel.merge(exposure[["sectorName", "pc1"]], on="sectorName")
-    panel = panel[panel["month"] >= EVENT_STUDY_PANEL_START].copy()
+    panel = panel[(panel["month"] >= EVENT_STUDY_PANEL_START)
+                  & (panel["month"] <= PANEL_END)].copy()
     panel["logy"] = np.log(panel["value"])
 
     months = sorted(panel["month"].unique())
@@ -228,7 +288,8 @@ def ModelIndeedPostingsEventStudyRemote(source, target, env):
           .mean().rename(columns={"value": "share"}))
 
     dec = mp.merge(mr, on=["sectorName", "month"])
-    dec = dec[(dec["month"] >= EVENT_STUDY_PANEL_START) & (dec["month"] <= EVENT_STUDY_REMOTE_PANEL_END)].copy()
+    dec = dec[(dec["month"] >= EVENT_STUDY_PANEL_START)
+              & (dec["month"] <= PANEL_END)].copy()
 
     # decompose postings; log odds gap absorbs sector-month FE
     dec["log_onsite"] = np.log(dec["idx"] * (1 - dec["share"] / 100))
@@ -299,3 +360,192 @@ def ModelIndeedPostingsEventStudyRemote(source, target, env):
             )
 
     out.to_csv(str(target[1]), index=False)
+
+
+def FitSectorWeights(I, r, I_miss, R, prior, penalty):
+    """
+    Recover each sector's share of postings at the Feb 2020 baseline from
+    the national remote share. Sector volumes are w_s I_st, so
+    R_t = sum_s w_s I_st r_st / sum_s w_s I_st, or equivalently
+    sum_s w_s I_st (r_st - R_t) = 0 at every month. Sectors without a
+    remote-share series (I_miss) get an unknown constant remote share rho_m,
+    which enters linearly through u_m = w_m rho_m with 0 <= u_m <= w_m.
+    Step 1 solves the linear condition by constrained least squares
+    (w >= 0, sum w = 1), with a penalty pulling the weights toward the
+    prior in proportion to the prior (a chi-square distance). Step 2
+    refines by nonlinear least squares directly on R_t from that start.
+    Arguments are T x S arrays (I, r), a T x M array (I_miss), a length-T
+    array (R) and a length S + M prior; returns (w, w_miss, rho).
+    """
+    S, M = I.shape[1], I_miss.shape[1]
+    w = cp.Variable(S, nonneg=True)
+    w_miss = cp.Variable(M, nonneg=True)
+    u = cp.Variable(M, nonneg=True)
+    resid = cp.multiply(I, r - R[:, None]) @ w + I_miss @ u \
+        - cp.multiply(I_miss, R[:, None]) @ w_miss
+    W = cp.hstack([w, w_miss])
+    cp.Problem(
+        cp.Minimize(cp.sum_squares(resid) / len(R)
+                    + penalty * cp.sum(cp.multiply(1 / prior, cp.square(W - prior)))),
+        [cp.sum(W) == 1, u <= w_miss],
+    ).solve()
+
+    def objective(x):
+        W, rho = x[:S + M], x[S + M:]
+        fit = ((I * r) @ W[:S] + I_miss @ (W[S:] * rho)) / (I @ W[:S] + I_miss @ W[S:])
+        return np.mean((fit - R) ** 2) + penalty * np.sum((W - prior) ** 2 / prior)
+
+    rho0 = np.clip(u.value / np.maximum(w_miss.value, 1e-9), 0, 1)
+    x0 = np.r_[np.clip(w.value, 0, 1), np.clip(w_miss.value, 0, 1), rho0]
+    x = minimize(objective, x0, method="SLSQP", bounds=[(0, 1)] * (S + 2 * M),
+                 constraints=[{"type": "eq", "fun": lambda x: x[:S + M].sum() - 1}],
+                 options={"maxiter": 1000, "ftol": 1e-14}).x
+    return x[:S], x[S:S + M], x[S + M:]
+
+
+def ModelIndeedPostingsDecomposeRemote(source, target, env):
+    """
+    Descriptive breakdown of the national remote share by sector. Indeed's
+    sector posting indices all equal 100 in Feb 2020, so they carry no
+    information about relative sector sizes; the baseline weights w_s are
+    recovered from the national remote share with FitSectorWeights, using
+    OEWS employment as the prior. Each sector's share of postings is then
+    pi_st = w_s I_st / sum_k w_k I_kt over all sectors, including those
+    without a remote-share series, and each sector's contribution to the
+    change since the peak month 0 is pi_st r_st - pi_s0 r_s0, which sums to
+    the change in the fitted aggregate. Non-seasonally-adjusted posting
+    indices are used to match the unadjusted remote-share series. Also
+    reports the fixed-mix counterfactual that holds sector posting shares at
+    the peak month.
+    """
+    postings = pd.read_csv(str(source[0]))
+    exposure = pd.read_csv(str(source[1]))
+    remote = pd.read_csv(str(source[2]))
+    national = pd.read_csv(str(source[3]))
+
+    for x in [postings, remote, national]:
+        x["month"] = pd.to_datetime(x["dateString"]).dt.to_period("M")
+    I = postings.groupby(["month", "sectorName"])["value"].mean().unstack() / 100
+    r = remote.groupby(["month", "sectorName"])["value"].mean().unstack() / 100
+    R = national.groupby("month")["value"].mean() / 100
+
+    E = exposure.set_index("sectorName")
+    months = I.index.intersection(r.index).intersection(R.index)
+    months = months[months <= PANEL_END]
+    I, r, R = I.loc[months, E.index], r.loc[months], R.loc[months]
+    # Indeed does not publish remote shares for some (mostly hands-on)
+    # sectors; they enter the fit with a constant remote share
+    obs = [s for s in E.index if s in r.columns and r[s].notna().all()]
+    miss = [s for s in E.index if s not in obs]
+    r = r[obs]
+    prior = E.loc[obs + miss, "weight"] / E.loc[obs + miss, "weight"].sum()
+
+    def fit(m, penalty):
+        return FitSectorWeights(I.loc[m, obs].values, r.loc[m].values,
+                                I.loc[m, miss].values, R.loc[m].values,
+                                prior.values, penalty)
+
+    def predict(m, w, w_miss, rho):
+        vol = I.loc[m, obs].values @ w + I.loc[m, miss].values @ w_miss
+        return ((I.loc[m, obs].values * r.loc[m].values) @ w
+                + I.loc[m, miss].values @ (w_miss * rho)) / vol
+
+    def rmse(m, est):
+        return 100 * np.sqrt(np.mean((predict(m, *est) - R.loc[m].values) ** 2))
+
+    train = months[months <= WEIGHTS_TRAIN_END]
+    test = months[months > WEIGHTS_TRAIN_END]
+    validation = {p: rmse(test, fit(train, p)) for p in WEIGHTS_PENALTIES}
+    penalty = min(validation, key=validation.get)
+    w, w_miss, rho = fit(months, penalty)
+    W = pd.Series(np.r_[w, w_miss], index=obs + miss)
+    rho = pd.Series(rho, index=miss)
+
+    vol = I * W
+    pi = vol.div(vol.sum(axis=1), axis=0)
+    remote_postings = pi[obs] * r
+    remote_missing = (pi[miss] * rho).sum(axis=1)
+    R_fit = remote_postings.sum(axis=1) + remote_missing
+
+    # exposure halves split at the median over all sectors
+    half = pd.Series(np.where(E["pc1"] >= E["pc1"].median(), "high", "low"),
+                     index=E.index)
+    # posting-weighted remote share within each exposure half, over sectors
+    # with a remote-share series
+    by_half = {f"R_{h}": remote_postings.T.groupby(half[obs]).sum().T[h]
+               / pi[obs].T.groupby(half[obs]).sum().T[h] for h in ["low", "high"]}
+
+    base = R.idxmax()
+    end = R.index.max()
+    contrib = remote_postings.loc[base:] - remote_postings.loc[base]
+    # counterfactual holding sector posting shares at the peak month: the
+    # fitted mix effect is added to the national series so the two lines
+    # differ only by the change in sector mix
+    R_fixed_mix_fit = (pi.loc[base, obs] * r.loc[base:]).sum(axis=1) \
+        + (pi.loc[base, miss] * rho).sum()
+    R_fixed_mix = R.loc[base:] + R_fixed_mix_fit - R_fit.loc[base:]
+
+    with open(str(target[0]), "w") as f:
+        print(f"sample: {len(obs)} sectors with remote shares, {len(miss)} "
+              f"without, {months.min()} to {months.max()}", file=f)
+        print(f"no remote share series: {'; '.join(miss)}", file=f)
+        print(f"\nbaseline weights: penalty chosen by fitting through "
+              f"{WEIGHTS_TRAIN_END} and predicting {test.min()} to "
+              f"{test.max()}", file=f)
+        for p, e in validation.items():
+            print(f"  penalty {p:g}: out-of-sample RMSE {e:.3f} pp"
+                  f"{'  <- chosen' if p == penalty else ''}", file=f)
+        print(f"full-sample fit: RMSE {rmse(months, (w, w_miss, rho.values)):.3f} pp, "
+              f"correlation with OEWS prior {np.corrcoef(W, prior)[0, 1]:.2f}, "
+              f"sectors without remote shares {W[miss].sum():.1%} of baseline "
+              f"postings", file=f)
+        print(f"\n  {'':40s} {'weight':>7s} {'OEWS':>7s} {'remote':>7s}", file=f)
+        for s in W.sort_values(ascending=False).index:
+            rs = f"{rho[s]:7.1%}" if s in miss else f"{'':7s}"
+            print(f"  {s:40s} {W[s]:7.2%} {prior[s]:7.2%} {rs}", file=f)
+        print("  (weight: fitted share of Feb 2020 postings; OEWS: prior; "
+              "remote: fitted constant remote share for sectors without a "
+              "series)", file=f)
+        print(f"\nnational remote share: peak {R.loc[base]:.2%} ({base}), "
+              f"latest {R.loc[end]:.2%} ({end}), change "
+              f"{100 * (R.loc[end] - R.loc[base]):+.2f} pp", file=f)
+        print(f"fitted remote share: peak month {R_fit.loc[base]:.2%}, latest "
+              f"{R_fit.loc[end]:.2%}, change "
+              f"{100 * (R_fit.loc[end] - R_fit.loc[base]):+.2f} pp", file=f)
+        for h in ["low", "high"]:
+            Rh = by_half[f"R_{h}"]
+            print(f"{h}-exposure half remote share: peak month "
+                  f"{Rh.loc[base]:.2%}, latest {Rh.loc[end]:.2%}", file=f)
+        print(f"sector mix held at {base}: latest {R_fixed_mix.loc[end]:.2%}",
+              file=f)
+        print(f"\nsector contributions to the change, {base} to {end} (pp):",
+              file=f)
+        print(f"  {'':40s} {'PC1':>6s} {'d pi':>8s} {'d remote':>9s} "
+              f"{'contrib':>8s}", file=f)
+        for s in contrib.loc[end].sort_values().index:
+            print(f"  {s:40s} {E.loc[s, 'pc1']:+6.2f} "
+                  f"{pi.loc[end, s] / pi.loc[base, s] - 1:+8.1%} "
+                  f"{100 * (r.loc[end, s] - r.loc[base, s]):+8.2f}pp "
+                  f"{100 * contrib.loc[end, s]:+8.3f}", file=f)
+        print(f"  {'Sectors without remote shares':40s} {'':6s} "
+              f"{pi.loc[end, miss].sum() / pi.loc[base, miss].sum() - 1:+8.1%} "
+              f"{'':10s} "
+              f"{100 * (remote_missing.loc[end] - remote_missing.loc[base]):+8.3f}",
+              file=f)
+        for h in ["high", "low"]:
+            c = contrib.loc[end, half[obs] == h]
+            print(f"  {h}-exposure half: {100 * c.sum():+.2f} pp "
+                  f"({(c < 0).sum()} of {len(c)} negative)", file=f)
+        print("  (d pi: relative change in share of postings; d remote: "
+              "change in sector remote share)", file=f)
+
+    pd.DataFrame({"R": R, "R_fit": R_fit, "R_fixed_mix": R_fixed_mix,
+                  **by_half}).rename_axis("month").reset_index().assign(
+        month=lambda x: x["month"].astype(str)).to_csv(str(target[1]), index=False)
+    sectors = contrib.rename_axis(index="month", columns="sectorName").stack(
+        ).rename("contrib").reset_index()
+    sectors["month"] = sectors["month"].astype(str)
+    sectors["pc1"] = sectors["sectorName"].map(E["pc1"])
+    sectors["half"] = sectors["sectorName"].map(half)
+    sectors[["month", "sectorName", "pc1", "half", "contrib"]].to_csv(
+        str(target[2]), index=False)

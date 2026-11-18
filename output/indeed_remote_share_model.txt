@@ -1,0 +1,35 @@
+                          PanelOLS Estimation Summary                           
+================================================================================
+Dep. Variable:                  value   R-squared:                        0.6497
+Estimator:                   PanelOLS   R-squared (Between):              0.3540
+No. Observations:               27740   R-squared (Within):             1.11e-16
+Date:                Fri, Nov 13 2026   R-squared (Overall):              0.3521
+Time:                        11:50:03   Log-likelihood                -9.164e+04
+Cov. Estimator:             Clustered                                           
+                                        F-statistic:                   5.135e+04
+Entities:                          38   P-value                           0.0000
+Avg Obs:                       730.00   Distribution:                 F(1,27687)
+Min Obs:                       730.00                                           
+Max Obs:                       730.00   F-statistic (robust):             80.566
+                                        P-value                           0.0000
+Time periods:                      52   Distribution:                 F(1,27687)
+Avg Obs:                       533.46                                           
+Min Obs:                       532.00                                           
+Max Obs:                       608.00                                           
+                                                                                
+                             Parameter Estimates                              
+==============================================================================
+            Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
+------------------------------------------------------------------------------
+pc1            10.068     1.1217     8.9759     0.0000      7.8698      12.267
+==============================================================================
+
+F-test for Poolability: 0.4660
+P-value: 0.9996
+Distribution: F(51,27687)
+
+Included effects: Time
+
+R² of week effects alone: 0.0003
+R² of week effects + AI exposure: 0.6498
+Partial R² of AI exposure (within week): 0.6497

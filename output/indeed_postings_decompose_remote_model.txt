@@ -1,0 +1,113 @@
+sample: 38 sectors with remote shares, 9 without, 2020-02 to 2026-09
+no remote share series: Administrative Assistance; Childcare; Cleaning & Sanitation; Food Preparation & Service; Installation & Maintenance; Loading & Stocking; Medical Information; Nursing; Personal Care & Home Health
+
+baseline weights: penalty chosen by fitting through 2023-12 and predicting 2024-01 to 2026-09
+  penalty 0: out-of-sample RMSE 0.296 pp
+  penalty 1e-06: out-of-sample RMSE 0.227 pp
+  penalty 1e-05: out-of-sample RMSE 0.206 pp
+  penalty 3e-05: out-of-sample RMSE 0.197 pp  <- chosen
+  penalty 0.0001: out-of-sample RMSE 0.210 pp
+  penalty 0.0003: out-of-sample RMSE 0.222 pp
+  penalty 0.001: out-of-sample RMSE 0.227 pp
+full-sample fit: RMSE 0.099 pp, correlation with OEWS prior 0.98, sectors without remote shares 31.0% of baseline postings
+
+                                            weight    OEWS  remote
+  Food Preparation & Service                 8.54%   8.99%    0.0%
+  Management                                 5.87%   5.34%        
+  Education & Instruction                    5.84%   6.17%        
+  Retail                                     5.65%   5.66%        
+  Administrative Assistance                  5.25%   6.15%    4.7%
+  Production & Manufacturing                 5.18%   6.32%        
+  Loading & Stocking                         4.31%   5.29%    0.7%
+  Sales                                      3.74%   2.94%        
+  Installation & Maintenance                 3.46%   3.78%    0.0%
+  Nursing                                    3.46%   3.80%    0.0%
+  Construction                               3.24%   4.35%        
+  Software Development                       2.98%   1.42%        
+  Driving                                    2.92%   2.81%        
+  Accounting                                 2.73%   2.62%        
+  Cleaning & Sanitation                      2.70%   3.25%    2.8%
+  Customer Service                           2.59%   2.27%        
+  Banking & Finance                          2.58%   2.10%        
+  Personal Care & Home Health                2.46%   2.59%    0.0%
+  Security & Public Safety                   2.35%   2.60%        
+  IT Systems & Solutions                     1.99%   1.30%        
+  Human Resources                            1.88%   1.23%        
+  Logistic Support                           1.72%   1.65%        
+  Community & Social Service                 1.71%   1.76%        
+  Medical Technician                         1.67%   1.94%        
+  Arts & Entertainment                       1.49%   1.20%        
+  Marketing                                  1.31%   0.87%        
+  Legal                                      0.99%   1.04%        
+  IT Infrastructure, Operations & Support    0.96%   0.85%        
+  Hospitality & Tourism                      0.94%   1.05%        
+  Physicians & Surgeons                      0.91%   0.84%        
+  Project Management                         0.83%   0.65%        
+  Scientific Research & Development          0.83%   0.72%        
+  Therapy                                    0.79%   0.71%        
+  Media & Communications                     0.77%   0.61%        
+  Industrial Engineering                     0.76%   0.52%        
+  Insurance                                  0.65%   0.73%        
+  Childcare                                  0.59%   0.69%   13.0%
+  Pharmacy                                   0.48%   0.56%        
+  Dental                                     0.47%   0.49%        
+  Data & Analytics                           0.44%   0.27%        
+  Architecture                               0.41%   0.38%        
+  Aviation                                   0.39%   0.39%        
+  Electrical Engineering                     0.37%   0.32%        
+  Civil Engineering                          0.25%   0.30%        
+  Mechanical Engineering                     0.25%   0.24%        
+  Medical Information                        0.19%   0.18%  100.0%
+  Social Science                             0.09%   0.09%        
+  (weight: fitted share of Feb 2020 postings; OEWS: prior; remote: fitted constant remote share for sectors without a series)
+
+national remote share: peak 10.36% (2022-02), latest 8.57% (2026-09), change -1.79 pp
+fitted remote share: peak month 10.32%, latest 8.49%, change -1.84 pp
+low-exposure half remote share: peak month 4.85%, latest 5.71%
+high-exposure half remote share: peak month 20.86%, latest 17.32%
+sector mix held at 2022-02: latest 9.87%
+
+sector contributions to the change, 2022-02 to 2026-09 (pp):
+                                              PC1     d pi  d remote  contrib
+  Software Development                      +1.66   -47.7%   -11.86pp   -1.069
+  Human Resources                           +0.83   -37.5%    -4.16pp   -0.320
+  IT Systems & Solutions                    +1.10   -38.0%    -3.03pp   -0.302
+  Marketing                                 +1.28   -36.4%    -5.43pp   -0.212
+  Accounting                                +1.26   -19.8%    -1.03pp   -0.157
+  IT Infrastructure, Operations & Support   +1.24   -28.6%    -4.02pp   -0.110
+  Media & Communications                    +1.16   -33.5%    -4.29pp   -0.091
+  Customer Service                          +1.26    +2.4%    -3.95pp   -0.082
+  Data & Analytics                          +1.67   -50.2%    +2.36pp   -0.072
+  Arts & Entertainment                      -0.64   -10.9%    -2.88pp   -0.064
+  Sales                                     +1.17    +9.0%    -3.18pp   -0.054
+  Banking & Finance                         +0.88    -7.2%    +0.06pp   -0.045
+  Logistic Support                          -0.53   -11.6%    -0.57pp   -0.037
+  Driving                                   -1.11    -8.8%    -1.04pp   -0.029
+  Industrial Engineering                    +0.30    -0.3%    -2.40pp   -0.021
+  Project Management                        +0.58    +0.2%    -1.96pp   -0.017
+  Scientific Research & Development         +0.17   -31.2%    +4.77pp   -0.010
+  Retail                                    -0.08   +13.4%    -0.41pp   -0.007
+  Management                                +0.22    +9.6%    -0.92pp   -0.002
+  Dental                                    -1.31   +32.9%    +0.35pp   +0.003
+  Hospitality & Tourism                     -0.21    +2.1%    +0.87pp   +0.007
+  Social Science                            +0.78   +10.5%    +4.33pp   +0.007
+  Pharmacy                                  -0.06   +20.0%    +0.90pp   +0.007
+  Architecture                              +0.10   -11.1%    +5.38pp   +0.012
+  Community & Social Service                -0.25    -1.7%    +1.29pp   +0.019
+  Aviation                                  -0.94   +29.1%    +3.18pp   +0.021
+  Mechanical Engineering                    +0.38   +50.2%    +5.55pp   +0.036
+  Civil Engineering                         +0.27   +47.0%    +7.88pp   +0.047
+  Education & Instruction                   +0.11    +7.3%    +0.57pp   +0.056
+  Electrical Engineering                    +0.41   +38.8%    +7.04pp   +0.058
+  Security & Public Safety                  -0.94    +9.8%    +1.85pp   +0.059
+  Medical Technician                        -1.06    +1.6%    +3.69pp   +0.070
+  Production & Manufacturing                -1.17    +1.3%    +1.14pp   +0.075
+  Therapy                                   -1.05   +77.9%    +3.01pp   +0.078
+  Insurance                                 +0.74   +14.0%    +8.47pp   +0.091
+  Construction                              -1.56   +30.6%    +1.63pp   +0.098
+  Physicians & Surgeons                     -0.44   +76.2%    +3.44pp   +0.115
+  Legal                                     +0.47    +7.0%    +8.90pp   +0.118
+  Sectors without remote shares                      +4.8%              -0.112
+  high-exposure half: -2.15 pp (15 of 22 negative)
+  low-exposure half: +0.43 pp (4 of 16 negative)
+  (d pi: relative change in share of postings; d remote: change in sector remote share)

@@ -5,7 +5,8 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from pandas import DateOffset
 from matplotlib.patches import Patch
-from .data import DATES, load_data
+from matplotlib.lines import Line2D
+from .data import DATES, PANEL_END, load_data
 from .util import weighted_correlation
 
 
@@ -196,8 +197,10 @@ def PlotIndeedPostingsAIExposure(source, target, env):
 
     for i, measure in enumerate(measures):
         ax = axes[i]
-        x = data[measure]
-        y = data["pct_change"]
+        # A measure can be missing for a sector no source covers; drop those points
+        pair = data[[measure, "pct_change"]].dropna()
+        x = pair[measure]
+        y = pair["pct_change"]
 
         ax.scatter(x, y, color="none", s=15, edgecolors="black", linewidths=0.75)
 
@@ -332,7 +335,7 @@ def PlotIndeedPostingsAIExposureHalves(source, target, env):
     E["half"] = np.where(E["pc1"] >= E["pc1"].median(), "high", "low")
 
     m = mp.merge(E[["half", "weight"]], left_on="sectorName", right_index=True)
-    m = m[m["month"] >= FIG_START]
+    m = m[(m["month"] >= FIG_START) & (m["month"] <= PANEL_END)]
     base = m[m["month"] == BASE_MONTH].set_index("sectorName")["value"]
     m["rebased"] = 100 * m["value"] / m["sectorName"].map(base)
 
@@ -363,7 +366,7 @@ def PlotIndeedPostingsAIExposureHalves(source, target, env):
                  "weighted by employment", fontsize=14, loc="left")
     ax.legend(frameon=False, loc="upper right")
     ax.spines[["top", "right"]].set_visible(False)
-    ax.set_xlim(FIG_START.to_timestamp(), pd.Timestamp("2026-12-31"))
+    ax.set_xlim(FIG_START.to_timestamp(), lines["t"].max() + DateOffset(months=6))
     plt.tight_layout()
     plt.savefig(str(target[0]))
     plt.savefig(str(target[1]), dpi=300)
@@ -377,7 +380,7 @@ def PlotIndeedPostingsAIExposureLikeForLike(source, target, env):
     """
     RED, BLUE = "#CC3311", "#4477AA"
     BASE_MONTH = pd.Period("2022-11")
-    LATE_START, LATE_END = pd.Period("2026-03"), pd.Period("2026-06")
+    LATE_START, LATE_END = pd.Period("2026-07"), PANEL_END
 
     postings = pd.read_csv(str(source[0]))
     exposure = pd.read_csv(str(source[1]))
@@ -426,7 +429,7 @@ def PlotIndeedPostingsAIExposureLikeForLike(source, target, env):
         Patch(color=BLUE, label=f"Low AI-exposure office jobs "
                                 f"(avg {mean_lo:.0f}%)"),
     ], frameon=False, loc="upper left", fontsize=11)
-    ax.set_xlabel("Change in job postings, Nov 2022 to mid-2026 (%)")
+    ax.set_xlabel("Change in job postings, Nov 2022 to Q3 2026 (%)")
     ax.set_title("Comparing like with like: among office-type jobs,\n"
                  "the most AI-exposed fell hardest", fontsize=14, loc="left")
     xmin = min(office["chg"].min(), mean_hi, mean_lo)
@@ -486,6 +489,202 @@ def PlotIndeedPostingsAvgAIExposure(source, target, env):
     ax.set_ylabel("% Change in Pre/Post ChatGPT Posting Index")
     for spine in ["top", "right"]:
         ax.spines[spine].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsDecomposeRemote(source, target, env):
+    """
+    Two-panel figure: (top) aggregate remote share of postings, with the
+    counterfactual that holds sector posting shares at the peak; (bottom)
+    each sector's contribution to the change since the peak, colored by AI
+    exposure.
+    """
+    RED, BLUE, GRAY = "#CC3311", "#4477AA", "#999999"
+
+    d = pd.read_csv(str(source[0]))
+    d["t"] = pd.PeriodIndex(d["month"], freq="M").to_timestamp()
+    peak = d.loc[d["R"].idxmax(), "t"]
+    peak_label = peak.strftime("%b %Y")
+    post = d[d["t"] >= peak]
+    # (date, label, label side, line style)
+    events = [
+        (DATES["COVID"], "COVID (Mar 2020)", "left", ":"),
+        (peak, f"Peak remote ({peak_label})", "left", ":"),
+    ]
+
+    plt.rcParams.update({"font.size": 12})
+    fig, axes = plt.subplots(2, 1, figsize=(10, 9), sharex=True,
+                             gridspec_kw={"height_ratios": [1, 1.2]})
+
+    ax = axes[0]
+    ax.plot(d["t"], 100 * d["R"], color="black", lw=2, label="All postings")
+    ax.plot(d["t"], 100 * d["R_fixed_mix"], color=GRAY, lw=2, ls=":",
+            label=f"Sector mix held at {peak_label} (counterfactual)")
+    ax.plot(d["t"], 100 * d["R_high"], color=RED, lw=1.5,
+            label="High AI exposure sectors")
+    ax.plot(d["t"], 100 * d["R_low"], color=BLUE, lw=1.5,
+            label="Low AI exposure sectors")
+    ax.fill_between(d["t"], 100 * d["R"], 100 * d["R_fixed_mix"],
+                    color=GRAY, alpha=0.3, lw=0)
+    for date, label, ha, ls in events:
+        ax.axvline(date, color="k", ls=ls, lw=1)
+        offset = pd.Timedelta(days=15 if ha == "left" else -15)
+        ax.text(date + offset, 0.03, label, fontsize=10,
+                ha=ha, va="bottom", transform=ax.get_xaxis_transform())
+    # latest values and change from the peak month, in the right margin
+    for col, color in [("R", "black"), ("R_fixed_mix", GRAY), ("R_high", RED),
+                       ("R_low", BLUE)]:
+        latest = 100 * post[col].iloc[-1]
+        chg = latest - 100 * post[col].iloc[0]
+        ax.text(post["t"].max() + pd.Timedelta(days=20), latest,
+                f"{latest:.1f}% ({chg:+.1f}pp)", color=color, fontsize=10,
+                va="center")
+    # peak-month values, above and to the left of each line's peak
+    for col, color in [("R", "black"), ("R_high", RED), ("R_low", BLUE)]:
+        ax.text(peak - pd.Timedelta(days=20), 100 * post[col].iloc[0] + 0.3,
+                f"{100 * post[col].iloc[0]:.1f}%", color=color, fontsize=10,
+                ha="right", va="bottom")
+    # earliest values in the left margin
+    for col, color in [("R", "black"), ("R_high", RED), ("R_low", BLUE)]:
+        ax.text(d["t"].iloc[0] - pd.Timedelta(days=20), 100 * d[col].iloc[0],
+                f"{100 * d[col].iloc[0]:.1f}%", color=color, fontsize=10,
+                ha="right", va="center")
+    ax.set_xlim(left=d["t"].iloc[0] - pd.Timedelta(days=200))
+    ax.set_ylim(0, 25)
+    ax.yaxis.set_major_locator(plt.MultipleLocator(5))
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0f}%"))
+    ax.set_ylabel("Remote share of postings")
+    ax.set_title("Aggregate remote share of US job postings", loc="left")
+    # top of the legend at the 25% tick, ordered high, counterfactual, all, low
+    handles, _ = ax.get_legend_handles_labels()
+    ax.legend(handles=[handles[i] for i in [2, 1, 0, 3]], frameon=False,
+              loc="upper right", bbox_to_anchor=(1, 1),
+              borderaxespad=0, borderpad=0, fontsize=10, handlelength=1.5)
+    ax.spines[["top", "right"]].set_visible(False)
+
+    ax = axes[1]
+    # one line per sector, colored by AI exposure half
+    s = pd.read_csv(str(source[1]))
+    s["t"] = pd.PeriodIndex(s["month"], freq="M").to_timestamp()
+    s["contrib"] = 100 * s["contrib"]
+    colors = {"low": BLUE, "high": RED}
+    # label the two largest negative contributors at the latest month, and
+    # the peaks of the two sectors that reach the highest contributions
+    last = s[s["t"] == s["t"].max()].set_index("sectorName")["contrib"]
+    first, second = last.nsmallest(2).index
+    peak_rows = s.loc[s.groupby("sectorName")["contrib"].idxmax()].nlargest(
+        2, "contrib")
+    labeled = {first, second, *peak_rows["sectorName"]}
+    for (name, h), g in s.groupby(["sectorName", "half"]):
+        bold = name in labeled
+        ax.plot(g["t"], g["contrib"], color=colors[h], lw=2 if bold else 1,
+                alpha=1 if bold else 0.5, zorder=3 if bold else 2)
+    label_style = dict(fontsize=9, fontweight="bold", color=RED)
+    ax.text(s["t"].max(), last[second] - 0.04, second, ha="right", va="top",
+            **label_style)
+    # the largest contributor is labeled mid-period, clear of the total line
+    g = s[s["sectorName"] == first].set_index("t")["contrib"]
+    mid = g.index[len(g) // 2]
+    ax.text(mid, g[mid] - 0.06, first, ha="center", va="top", **label_style)
+    for _, row in peak_rows.iterrows():
+        ax.text(row["t"], row["contrib"] + 0.03, row["sectorName"],
+                ha="center", va="bottom", **label_style)
+    # latest contribution of each labeled sector, in the right margin
+    for name in labeled:
+        ax.text(s["t"].max() + pd.Timedelta(days=20), last[name],
+                f"{last[name]:+.2f}pp", color=RED, fontsize=10, va="center")
+    total = 100 * (post["R"] - post["R"].iloc[0])
+    ax.plot(post["t"], total, color="black", lw=2.5, label="Total change")
+    ax.axhline(0, color="gray", lw=0.6)
+    for date, _, _, ls in events:
+        ax.axvline(date, color="k", ls=ls, lw=1)
+    ax.yaxis.set_major_locator(plt.MultipleLocator(0.25))
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:+.2f}"))
+    ax.set_ylabel(f"Change since {peak_label} (pp)")
+    ax.set_title(f"Each sector's contribution to the change since the "
+                 f"{peak_label} peak", loc="left")
+    handles, _ = ax.get_legend_handles_labels()
+    handles = [Line2D([], [], color=BLUE, lw=1.5, label="Low AI exposure sector"),
+               Line2D([], [], color=RED, lw=1.5, label="High AI exposure sector"),
+               *handles]
+    ax.legend(handles=handles, frameon=False, loc="lower left",
+              bbox_to_anchor=(0.055, 0), fontsize=10)
+    ax.spines[["top", "right"]].set_visible(False)
+
+    plt.tight_layout()
+    plt.savefig(str(target[0]))
+    plt.savefig(str(target[1]), dpi=300)
+
+
+def PlotIndeedPostingsRemoteComponents(source, target, env):
+    """
+    Two-panel figure of the posting index for Human Resources (top) and
+    Software Development (bottom), split into its remote and non-remote
+    components: I_st r_st and I_st (1 - r_st), which sum to the index. The
+    month of peak national remote share is marked.
+    Non-seasonally-adjusted indices are used to match the unadjusted
+    remote-share series.
+    """
+    ORANGE, GRAY = "#EE7733", "#999999"
+    sectors = ["Human Resources", "Software Development"]
+
+    postings = pd.read_csv(str(source[0]))
+    remote = pd.read_csv(str(source[1]))
+    national = pd.read_csv(str(source[2]))
+    for x in [postings, remote, national]:
+        x["month"] = pd.to_datetime(x["dateString"]).dt.to_period("M")
+    I = postings.groupby(["month", "sectorName"])["value"].mean().unstack()
+    r = remote.groupby(["month", "sectorName"])["value"].mean().unstack() / 100
+    months = I.index.intersection(r.index)
+    months = months[(months >= pd.Period("2020-02")) & (months <= PANEL_END)]
+    I, r = I.loc[months, sectors], r.loc[months, sectors]
+    t = months.to_timestamp()
+    # month in which the national remote share is highest
+    R = national.groupby("month")["value"].mean().loc[months]
+    peak = R.idxmax().to_timestamp()
+
+    plt.rcParams.update({"font.size": 12})
+    fig, axes = plt.subplots(2, 1, figsize=(10, 9), sharex=True)
+
+    for ax, name in zip(axes, sectors):
+        series = [
+            (I[name], "black", 2, "All postings"),
+            (I[name] * (1 - r[name]), GRAY, 1.5, "Non-remote"),
+            (I[name] * r[name], ORANGE, 1.5, "Remote"),
+        ]
+        for y, color, lw, label in series:
+            y = y.set_axis(t)
+            ax.plot(t, y, color=color, lw=lw, label=label)
+            # latest value in the right margin
+            ax.text(t[-1] + pd.Timedelta(days=20), y.iloc[-1],
+                    f"{y.iloc[-1]:.0f}", color=color, fontsize=10, va="center")
+            # peak-month value, above and to the left of the peak line
+            ax.text(peak - pd.Timedelta(days=20), y[peak], f"{y[peak]:.0f}",
+                    color=color, fontsize=10, ha="right", va="bottom")
+            # pre-pandemic (Feb 2020) value in the left margin; all postings
+            # and non-remote start close together, so split them vertically
+            ax.text(t[0] - pd.Timedelta(days=20), y.iloc[0],
+                    f"{y.iloc[0]:.0f}", color=color, fontsize=10, ha="right",
+                    va={"All postings": "bottom", "Non-remote": "top"}.get(
+                        label, "center"))
+        ax.axvline(DATES["COVID"], color="k", ls=":", lw=1)
+        ax.axvline(peak, color="k", ls=":", lw=1)
+        ax.text(DATES["COVID"] + pd.Timedelta(days=15), 0.97,
+                "COVID (Mar 2020)", fontsize=10, va="top",
+                transform=ax.get_xaxis_transform())
+        ax.text(peak + pd.Timedelta(days=15), 0.97,
+                f"Peak remote ({peak:%b %Y})", fontsize=10, va="top",
+                transform=ax.get_xaxis_transform())
+        ax.set_xlim(left=t[0] - pd.Timedelta(days=150))
+        # headroom above the peak for the event labels
+        ax.set_ylim(0, 1.15 * I[name].max())
+        ax.set_ylabel("Posting index (Feb 2020 = 100)")
+        ax.set_title(name, loc="left")
+        ax.spines[["top", "right"]].set_visible(False)
+    axes[0].legend(frameon=False, loc="upper right", fontsize=10)
 
     plt.tight_layout()
     plt.savefig(str(target[0]))

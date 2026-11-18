@@ -4,7 +4,7 @@ Build a crosswalk mapping SOC codes from OEWS to Indeed sectorName values.
 Claude Code explanation of the mapping:
 
 >  The mapping is complete. Created input/indeed-sector-soc-mapping.csv with 831 detailed SOC
->  occupation codes mapped to all 40 Indeed sector names. The mapping uses:
+>  occupation codes mapped to all 47 Indeed sector names. The mapping uses:
 >
 >  - Specific overrides for ~300 codes where the occupation clearly belongs to a particular sector
 >  (e.g., Software Developers → Software Development, Registered Nurses → Nursing)
@@ -14,10 +14,21 @@ Claude Code explanation of the mapping:
 >  49-xxxx → Installation & Maintenance)
 >
 >  Notable mapping decisions for SOC groups without a direct Indeed match:
->  - Construction & Extraction (47) → Installation & Maintenance (closest available)
 >  - Farming, Fishing, Forestry (45) → Production & Manufacturing (primary production roles)
 >
 >  The build script is at scripts/build_indeed_sector_soc_mapping.py for reproducibility.
+
+Indeed added six sectors in the 2026 refresh of
+input/indeed-job-postings-sector-index.csv; these are now mapped here:
+
+  aviation      Aviation      pilots, air traffic, flight crew, aircraft mechanics
+  construction  Construction  SOC 47 (construction trades and extraction)
+  driver        Driving       SOC 53-3 motor vehicle operators
+  insurance     Insurance     adjusters, underwriters, insurance sales and clerks
+  meddental     Dental        dentists, hygienists, assistants, lab technicians
+  therapy       Therapy       PT/OT/speech/respiratory therapists, assistants, aides
+
+All 47 Indeed sectors now receive at least one SOC code.
 """
 
 import csv
@@ -63,7 +74,7 @@ specific = {
     "11-9071": "Hospitality & Tourism",  # Gambling Managers
     "11-9072": "Arts & Entertainment",   # Entertainment and Recreation Managers
     "11-9081": "Hospitality & Tourism",  # Lodging Managers
-    "11-9021": "Project Management",  # Construction Managers
+    "11-9021": "Construction",        # Construction Managers
     "11-9111": "Management",          # Medical and Health Services Managers
     "11-9121": "Scientific Research & Development",  # Natural Sciences Managers
     "11-9141": "Sales",               # Property, Real Estate Managers
@@ -72,8 +83,8 @@ specific = {
 
     # Business and Financial Operations (13) overrides
     "13-1011": "Arts & Entertainment",   # Agents of Artists, Performers, Athletes
-    "13-1031": "Banking & Finance",      # Claims Adjusters
-    "13-1032": "Banking & Finance",      # Insurance Appraisers
+    "13-1031": "Insurance",              # Claims Adjusters
+    "13-1032": "Insurance",              # Insurance Appraisers
     "13-1041": "Management",             # Compliance Officers
     "13-1051": "Accounting",             # Cost Estimators
     "13-1071": "Human Resources",        # Human Resources Specialists
@@ -96,7 +107,7 @@ specific = {
     "13-2041": "Banking & Finance",      # Credit Analysts
     "13-2051": "Banking & Finance",      # Financial and Investment Analysts
     "13-2052": "Banking & Finance",      # Personal Financial Advisors
-    "13-2053": "Banking & Finance",      # Insurance Underwriters
+    "13-2053": "Insurance",              # Insurance Underwriters
     "13-2054": "Banking & Finance",      # Financial Risk Specialists
     "13-2061": "Banking & Finance",      # Financial Examiners
     "13-2071": "Banking & Finance",      # Credit Counselors
@@ -129,6 +140,7 @@ specific = {
     "15-2099": "Data & Analytics",         # Mathematical Science, All Other
 
     # Architecture and Engineering (17) overrides
+    "17-2011": "Aviation",                 # Aerospace Engineers
     "17-1011": "Architecture",             # Architects
     "17-1012": "Architecture",             # Landscape Architects
     "17-1021": "Architecture",             # Cartographers
@@ -179,32 +191,32 @@ specific = {
 
     # Healthcare Practitioners (29) overrides
     "29-1011": "Physicians & Surgeons",   # Chiropractors
-    "29-1021": "Physicians & Surgeons",   # Dentists, General
-    "29-1022": "Physicians & Surgeons",   # Oral and Maxillofacial Surgeons
-    "29-1023": "Physicians & Surgeons",   # Orthodontists
-    "29-1024": "Physicians & Surgeons",   # Prosthodontists
-    "29-1029": "Physicians & Surgeons",   # Dentists, All Other Specialists
+    "29-1021": "Dental",                  # Dentists, General
+    "29-1022": "Dental",                  # Oral and Maxillofacial Surgeons
+    "29-1023": "Dental",                  # Orthodontists
+    "29-1024": "Dental",                  # Prosthodontists
+    "29-1029": "Dental",                  # Dentists, All Other Specialists
     "29-1031": "Physicians & Surgeons",   # Dietitians and Nutritionists
     "29-1041": "Physicians & Surgeons",   # Optometrists
     "29-1051": "Pharmacy",                # Pharmacists
     "29-1071": "Physicians & Surgeons",   # Physician Assistants
     "29-1081": "Physicians & Surgeons",   # Podiatrists
-    "29-1122": "Physicians & Surgeons",   # Occupational Therapists
-    "29-1123": "Physicians & Surgeons",   # Physical Therapists
-    "29-1124": "Physicians & Surgeons",   # Radiation Therapists
-    "29-1125": "Physicians & Surgeons",   # Recreational Therapists
-    "29-1126": "Physicians & Surgeons",   # Respiratory Therapists
-    "29-1127": "Physicians & Surgeons",   # Speech-Language Pathologists
-    "29-1128": "Physicians & Surgeons",   # Exercise Physiologists
-    "29-1129": "Physicians & Surgeons",   # Therapists, All Other
+    "29-1122": "Therapy",                 # Occupational Therapists
+    "29-1123": "Therapy",                 # Physical Therapists
+    "29-1124": "Therapy",                 # Radiation Therapists
+    "29-1125": "Therapy",                 # Recreational Therapists
+    "29-1126": "Therapy",                 # Respiratory Therapists
+    "29-1127": "Therapy",                 # Speech-Language Pathologists
+    "29-1128": "Therapy",                 # Exercise Physiologists
+    "29-1129": "Therapy",                 # Therapists, All Other
     "29-1131": "Physicians & Surgeons",   # Veterinarians
     "29-1141": "Nursing",                 # Registered Nurses
     "29-1151": "Nursing",                 # Nurse Anesthetists
     "29-1161": "Nursing",                 # Nurse Midwives
     "29-1171": "Nursing",                 # Nurse Practitioners
-    "29-1181": "Physicians & Surgeons",   # Audiologists
+    "29-1181": "Therapy",                 # Audiologists
     "29-1291": "Physicians & Surgeons",   # Acupuncturists
-    "29-1292": "Medical Technician",      # Dental Hygienists (override 29-12 sub_prefix)
+    "29-1292": "Dental",                  # Dental Hygienists (override 29-12 sub_prefix)
     "29-2052": "Pharmacy",                # Pharmacy Technicians
     "29-2061": "Nursing",                 # Licensed Practical/Vocational Nurses
     "29-2072": "Medical Information",     # Medical Records Specialists
@@ -213,10 +225,12 @@ specific = {
     "29-9092": "Medical Information",     # Genetic Counselors
 
     # Healthcare Support (31) overrides
-    "31-1120": "Nursing",                # Home Health and Personal Care Aides
+    "31-1120": "Personal Care & Home Health",  # Home Health and Personal Care Aides
     "31-1131": "Nursing",                # Nursing Assistants
     "31-1132": "Nursing",                # Orderlies
     "31-1133": "Nursing",                # Psychiatric Aides
+    "31-9011": "Therapy",                # Massage Therapists
+    "31-9091": "Dental",                 # Dental Assistants
     "31-9094": "Medical Information",    # Medical Transcriptionists
     "31-9095": "Pharmacy",               # Pharmacy Aides
     "31-9099": "Nursing",                # Healthcare Support Workers, All Other
@@ -262,6 +276,7 @@ specific = {
     "41-2021": "Retail",               # Counter and Rental Clerks
     "41-2022": "Retail",               # Parts Salespersons
     "41-2031": "Retail",               # Retail Salespersons
+    "41-3021": "Insurance",            # Insurance Sales Agents
     "41-3031": "Banking & Finance",    # Securities/Commodities Sales
     "41-3041": "Hospitality & Tourism",  # Travel Agents
     "41-9011": "Marketing",            # Demonstrators and Product Promoters
@@ -296,23 +311,20 @@ specific = {
     "43-5071": "Loading & Stocking",    # Shipping, Receiving, Inventory Clerks
     "43-5111": "Loading & Stocking",    # Weighers, Measurers
     "43-6012": "Legal",                 # Legal Secretaries
-    "43-9041": "Banking & Finance",     # Insurance Claims Processing
+    "43-9041": "Insurance",             # Insurance Claims and Policy Processing Clerks
     "43-9111": "Data & Analytics",      # Statistical Assistants
 
-    # Installation, Maintenance, and Repair (1) overrides
+    # Installation, Maintenance, and Repair (49) overrides
     "49-2011": "IT Infrastructure, Operations & Support",  # Computer, Automated Teller, and Office Machine Repairers
+    "49-3011": "Aviation",   # Aircraft Mechanics and Service Technicians
+
+    # Production (51) overrides
+    "51-2011": "Aviation",   # Aircraft Structure, Surfaces, Rigging, and Systems Assemblers
+    "51-9081": "Dental",     # Dental Laboratory Technicians
 
     # Transportation and Material Moving (53) overrides
-    "53-2031": "Hospitality & Tourism",  # Flight Attendants
-    "53-3011": "Logistic Support",       # Ambulance Drivers
-    "53-3031": "Logistic Support",       # Driver/Sales Workers
-    "53-3032": "Logistic Support",       # Heavy Truck Drivers
-    "53-3033": "Logistic Support",       # Light Truck Drivers
-    "53-3051": "Logistic Support",       # Bus Drivers, School
-    "53-3052": "Logistic Support",       # Bus Drivers, Transit
-    "53-3053": "Logistic Support",       # Shuttle Drivers
-    "53-3054": "Logistic Support",       # Taxi Drivers
-    "53-3099": "Logistic Support",       # Motor Vehicle Operators, All Other
+    "53-1041": "Aviation",               # Aircraft Cargo Handling Supervisors
+    "53-6032": "Aviation",               # Aircraft Service Attendants
     "53-7051": "Loading & Stocking",    # Industrial Truck Operators
     "53-7061": "Cleaning & Sanitation", # Cleaners of Vehicles and Equipment
     "53-7062": "Loading & Stocking",    # Laborers, Freight, Stock Movers
@@ -344,7 +356,7 @@ prefix_defaults = {
     "41": "Sales",
     "43": "Administrative Assistance",
     "45": "Production & Manufacturing",  # farming - no direct match
-    "47": "Installation & Maintenance",  # construction - closest match
+    "47": "Construction",                # construction trades and extraction
     "49": "Installation & Maintenance",
     "51": "Production & Manufacturing",
     "53": "Logistic Support",            # default for transportation
@@ -355,6 +367,9 @@ sub_prefix = {
     "27-3": "Media & Communications",   # Media and Communication Workers
     "27-4": "Media & Communications",   # Media and Communication Equipment Workers
     "29-12": "Physicians & Surgeons",   # All physicians and surgeons
+    "31-2": "Therapy",                  # Occupational/physical therapy assistants and aides
+    "53-2": "Aviation",                 # Air transportation workers (pilots, ATC, flight attendants)
+    "53-3": "Driving",                  # Motor vehicle operators
 }
 
 def get_sector(occ_code):
